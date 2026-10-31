@@ -3,33 +3,26 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model Company {
-  id        String   @id @default(uuid())
-  name      String
-  domain    String?
-  plan      String   @default("FREE_TRIAL") // FREE_TRIAL, STARTER, PRO, etc.
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  users     User[]
+  id               String   @id @default(uuid())
+  name             String
+  subscriptionPlan String   @default("FREE")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  users            User[]
 }
 
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
-  firstName String
-  lastName  String
-  role      String   @default("EMPLOYEE") // OWNER, ADMIN, MANAGER, EMPLOYEE
-
-  // Relatia cu compania (Tenant-ul)
-  companyId String?
-  company   Company? @relation(fields: [companyId], references: [id])
-
+  role      String   @default("VIEWER") // Roluri: SUPER_ADMIN, ADMIN, VIEWER
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
