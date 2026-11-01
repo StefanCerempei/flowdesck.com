@@ -2,6 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
 import authRoutes from './routes/auth.js';
+import dashboardRoutes from './src/modules/dashboard/dashboard.routes.js';
+import taskRoutes from './src/modules/tasks/tasks.routes.js';
+import contactRoutes from './src/modules/contacts/contacts.routes.js';
+import invoiceRoutes from './src/modules/invoices/invoices.routes.js';
 
 const app = express();
 const prisma = new PrismaClient();
@@ -11,7 +15,10 @@ const PORT = process.env.PORT || 5000;
 app.use(cors()); // Permite frontend-ului să comunice cu backend-ul
 app.use(express.json()); // Permite citirea datelor tip JSON
 app.use('/api/auth', authRoutes);
-
+app.use('/api/contacts', contactRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/invoices', invoiceRoutes);
 // Rută de test pentru a verifica dacă serverul merge
 app.get('/api/health', (req, res) => {
     res.json({ status: 'succes', mesaj: 'Serverul CRM funcționează perfect!' });
