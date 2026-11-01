@@ -8,12 +8,15 @@ datasource db {
 }
 
 model Company {
-  id               String   @id @default(uuid())
+  id               String    @id @default(uuid())
   name             String
-  subscriptionPlan String   @default("FREE")
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  subscriptionPlan String    @default("FREE")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
   users            User[]
+  contacts         Contact[]
+  tasks            Task[]
+  invoices         Invoice[] // Linia nouă
 }
 
 model User {
@@ -25,4 +28,52 @@ model User {
   company   Company  @relation(fields: [companyId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Contact {
+  id             String    @id @default(uuid())
+  firstName      String
+  lastName       String
+  email          String?
+  phone          String?
+  company        String?
+  status         String    @default("LEAD")
+  notes          String?   @db.Text
+  potentialValue Float?
+  source         String?
+  tenantId       String
+  tenant         Company   @relation(fields: [tenantId], references: [id])
+  invoices       Invoice[] // Linia nouă pentru a lega facturile de contacte
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Task {
+  id        String   @id @default(uuid())
+  title     String
+  priority  String   @default("Normal") // Normal, Urgent
+  completed Boolean  @default(false)
+
+  tenantId  String
+  tenant    Company  @relation(fields: [tenantId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Invoice {
+  id            String    @id @default(uuid())
+  invoiceNumber String    // Ex: "INV-2026-001"
+  amount        Float     // Valoarea facturii în EUR
+  status        String    @default("PENDING") // PENDING (în așteptare), PAID (plătită), OVERDUE (scadentă)
+  dueDate       String?   // Data scadenței
+
+  tenantId      String
+  tenant        Company   @relation(fields: [tenantId], references: [id])
+
+  contactId     String?
+  contact       Contact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
