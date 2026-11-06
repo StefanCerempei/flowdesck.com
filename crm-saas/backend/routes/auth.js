@@ -1,85 +1,37 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../src/lib/prisma.js';
+import { schemas, validateBody } from '../src/middleware/validation.middleware.js';
 
 const router = express.Router();
-const prisma = new PrismaClient();
-
-// 1. ÎNREGISTRARE (Creare Companie + Cont Super Admin)
-router.post('/register', async (req, res) => {
+router.post('/register', validateBody(schemas.register), async (req, res, next) => {
     const { companyName, email, password } = req.body;
-
     try {
-        // Verificăm dacă email-ul există deja
-        const userExists = await prisma.user.findUnique({ where: { email } });
-        if (userExists) {
-            return res.status(400).json({ eroare: 'Acest email este deja folosit.' });
-        }
-
-        // Criptăm parola
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        // Creăm Compania și Utilizatorul simultan (relație Prisma)
-        const newCompany = await prisma.company.create({
-            data: {
-                name: companyName,
-                users: {
-                    create: {
-                        email,
-                        password: hashedPassword,
-                        role: 'SUPER_ADMIN'
-                    }
-                }
-            }
-        });
-
+        const existing = await prisma.user.findUnique({ where: { email } });
+        if (existing) return res.status(409).json({ eroare: 'Acest email este deja folosit.' });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        // Nested creation is atomic: a duplicate email cannot leave an orphan company.
+        await prisma.company.create({ data: {
+            name: companyName,
+            users: { create: { email, password: hashedPassword, role: 'SUPER_ADMIN' } }
+        } });
         res.status(201).json({ mesaj: 'Compania și contul au fost create cu succes!' });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ eroare: 'Eroare la înregistrare pe server.' });
+        if (error.code === 'P2002') return res.status(409).json({ eroare: 'Acest email este deja folosit.' });
+        next(error);
     }
 });
-
-// 2. AUTENTIFICARE (Login)
-router.post('/login', async (req, res) => {
+router.post('/login', validateBody(schemas.login), async (req, res, next) => {
     const { email, password } = req.body;
-
     try {
-        // Căutăm utilizatorul
         const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) {
-            return res.status(404).json({ eroare: 'Utilizatorul nu a fost găsit.' });
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.status(401).json({ eroare: 'Email sau parolă incorectă.' });
         }
-
-        // Verificăm parola
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ eroare: 'Parolă incorectă.' });
-        }
-
-        // Generăm Token-ul de sesiune
-        const token = jwt.sign(
-            { id: user.id, companyId: user.companyId, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: '1d' } // Expiră într-o zi
-        );
-
-        // Trimitem datele către interfață (fără parolă)
-        res.json({
-            token,
-            user: {
-                id: user.id,
-                email: user.email,
-                role: user.role,
-                companyId: user.companyId
-            }
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ eroare: 'Eroare la autentificare.' });
-    }
+        const token = jwt.sign({ id: user.id, companyId: user.companyId, role: user.role }, process.env.JWT_SECRET,
+            { expiresIn: '1d', algorithm: 'HS256' });
+        res.json({ token, user: { id: user.id, email: user.email, role: user.role, companyId: user.companyId } });
+    } catch (error) { next(error); }
 });
-
 export default router;

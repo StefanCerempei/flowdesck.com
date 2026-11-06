@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { prisma } from '../../lib/prisma.js';
 
 // GET: Preluăm toți clienții companiei curente
 export const getContacts = async (req, res) => {
@@ -37,9 +36,9 @@ export const createContact = async (req, res) => {
                 company,
                 status: status || 'LEAD',
                 tenantId,
-                notes: notes || null,
-                potentialValue: potentialValue ? parseFloat(potentialValue) : null,
-                source: source || null
+                notes,
+                potentialValue,
+                source
             }
         });
 
@@ -74,9 +73,9 @@ export const updateContact = async (req, res) => {
                 phone,
                 company,
                 status,
-                notes: notes || null,
-                potentialValue: potentialValue ? parseFloat(potentialValue) : null,
-                source: source || null
+                notes,
+                potentialValue,
+                source
             }
         });
 

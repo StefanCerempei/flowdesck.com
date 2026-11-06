@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { prisma } from '../../lib/prisma.js';
 
 export const getDashboardSummary = async (req, res) => {
     try {
@@ -17,7 +16,11 @@ export const getDashboardSummary = async (req, res) => {
         // Preluăm facturile pentru a calcula veniturile reale
         const invoices = await prisma.invoice.findMany({ where: { tenantId } });
 
-        const paidInvoices = invoices.filter(inv => inv.status === 'PAID');
+        // Until payment timestamps exist, monthly revenue uses the invoice creation month (UTC).
+        const now = new Date();
+        const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+        const nextMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
+        const paidInvoices = invoices.filter(inv => inv.status === 'PAID' && inv.createdAt >= monthStart && inv.createdAt < nextMonth);
         const monthlyRevenue = paidInvoices.reduce((sum, inv) => sum + inv.amount, 0);
         const unpaidCount = invoices.filter(inv => inv.status === 'PENDING' || inv.status === 'OVERDUE').length;
 

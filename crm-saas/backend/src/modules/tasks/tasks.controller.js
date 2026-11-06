@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { prisma } from '../../lib/prisma.js';
 
 // GET: Preluăm toate sarcinile companiei
 export const getTasks = async (req, res) => {

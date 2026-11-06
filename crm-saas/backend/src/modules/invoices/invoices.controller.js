@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { prisma } from '../../lib/prisma.js';
 
 // GET: Preluăm toate facturile companiei
 export const getInvoices = async (req, res) => {
@@ -27,10 +26,15 @@ export const createInvoice = async (req, res) => {
             return res.status(400).json({ eroare: 'Numărul facturii și suma sunt obligatorii.' });
         }
 
+        if (contactId) {
+            const contact = await prisma.contact.findFirst({ where: { id: contactId, tenantId }, select: { id: true } });
+            if (!contact) return res.status(404).json({ eroare: 'Clientul nu a fost găsit.' });
+        }
+
         const newInvoice = await prisma.invoice.create({
             data: {
                 invoiceNumber,
-                amount: parseFloat(amount),
+                amount,
                 status: status || 'PENDING',
                 dueDate: dueDate || null,
                 contactId: contactId || null,
