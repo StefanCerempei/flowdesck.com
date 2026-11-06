@@ -19,12 +19,13 @@ app.use('/api/contacts', contactRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/invoices', invoiceRoutes);
+
 // Rută de test pentru a verifica dacă serverul merge
 app.get('/api/health', (req, res) => {
     res.json({ status: 'succes', mesaj: 'Serverul CRM funcționează perfect!' });
 });
 
-// Rută de test pentru baza de date (va returna un array gol momentan)
+// Rută de test pentru baza de date
 app.get('/api/companii', async (req, res) => {
     try {
         const companii = await prisma.company.findMany();
