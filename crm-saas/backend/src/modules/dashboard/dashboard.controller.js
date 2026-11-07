@@ -1,3 +1,4 @@
+import { activity } from './activity.js';
 import { prisma } from '../../lib/prisma.js';
 
 export const getDashboardSummary = async (req, res) => {
@@ -25,6 +26,8 @@ export const getDashboardSummary = async (req, res) => {
         const unpaidCount = invoices.filter(inv => inv.status === 'PENDING' || inv.status === 'OVERDUE').length;
 
         res.status(200).json({
+            activity: await activity(tenantId),
+            company: (await prisma.company.findUnique({where:{id:tenantId}, select:{name:true}})).name,
             stats: {
                 activeClients,
                 totalContacts,

@@ -26,7 +26,7 @@ import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 import './Contact.css';
 
-const API_URL = 'http://localhost:5000/api/contacts';
+const API_URL = `${import.meta.env.VITE_API_BASE_URL || ''}/api/contacts`;
 
 const INITIAL_FORM = {
     firstName: '',

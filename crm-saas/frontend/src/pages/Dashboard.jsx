@@ -8,11 +8,19 @@ import {
 } from "lucide-react";
 import "./Dashboard.css";
 
-// Date statice pentru grafice (vor fi dinamizate la modulul facturi)
-const revenue = [35, 48, 40, 65, 52, 72, 58, 83, 69, 92, 75, 100];
-const months = ["Ian", "Feb", "Mar", "Apr", "Mai", "Iun", "Iul", "Aug", "Sep", "Oct", "Noi", "Dec"];
-
 export default function Dashboard() {
+    const [brief, setBrief] = useState(null);
+    const [busy, setBusy] = useState(false);
+    async function generateBrief() {
+        setBusy(true);
+        try {
+            const result = await axios.post(`${import.meta.env.VITE_API_BASE_URL || ''}/api/dashboard/brief`, {}, {
+                headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
+            });
+            setBrief(result.data);
+        } catch { setBrief({source:'error', text:'Cererea a eșuat. Încearcă din nou.'}); }
+        finally { setBusy(false); }
+    }
     const navigate = useNavigate();
 
     // 1. TOATE HOOK-URILE (STATE) ÎN INTERIORUL FUNCȚIEI
@@ -55,7 +63,7 @@ export default function Dashboard() {
         if (!token) return;
 
         try {
-            const res = await axios.get('http://localhost:5000/api/dashboard/summary', {
+            const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || ''}/api/dashboard/summary`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setDashboardData(res.data);
@@ -75,7 +83,7 @@ export default function Dashboard() {
 
         const token = localStorage.getItem("token");
         try {
-            await axios.post('http://localhost:5000/api/tasks', {
+            await axios.post(`${import.meta.env.VITE_API_BASE_URL || ''}/api/tasks`, {
                 title: newTaskTitle,
                 priority: newTaskPriority
             }, {
@@ -94,7 +102,7 @@ export default function Dashboard() {
     const handleToggleTask = async (taskId) => {
         const token = localStorage.getItem("token");
         try {
-            await axios.patch(`http://localhost:5000/api/tasks/${taskId}`, {}, {
+            await axios.patch(`${import.meta.env.VITE_API_BASE_URL || ''}/api/tasks/${taskId}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             await fetchDashboardData(); // Reîmprospătăm datele
@@ -141,10 +149,10 @@ export default function Dashboard() {
         {
             title: "Venituri lunare",
             value: `€${dashboardData.stats.monthlyRevenue}`,
-            change: "+8.4%",
+            change: "Luna curentă",
             icon: BarChart3,
             color: "violet",
-            note: "față de luna trecută",
+            note: "facturi emise și plătite",
         },
         {
             title: "Facturi neplătite",
@@ -239,7 +247,7 @@ export default function Dashboard() {
                 <div className="dashboard-content">
                     <section className="dashboard-welcome">
                         <div>
-                            <div className="welcome-eyebrow"><CalendarDays size={14} /><span>OVERVIEW · 2026</span></div>
+                            <div className="welcome-eyebrow"><CalendarDays size={14} /><span>{dashboardData.company || "Compania mea"}</span></div>
                             <p className="welcome-kicker">Bine ai revenit!</p>
                             <h1>Bună, {name}!</h1>
                         </div>
@@ -273,23 +281,14 @@ export default function Dashboard() {
                     <section className="dashboard-grid dashboard-grid-main">
                         <article className="panel revenue-panel">
                             <div className="panel-heading">
-                                <div><h2>Evoluția veniturilor</h2><p>Performanța financiară a companiei</p></div>
+                                <div><h2>Ultimele 4 săptămâni</h2><p>Facturi plătite, grupate după data emiterii</p></div>
                             </div>
-                            <div className="revenue-summary">
-                                <strong>€{dashboardData.stats.monthlyRevenue}</strong>
-                            </div>
-                            <div className="chart-area">
-                                <div className="chart-bars">
-                                    {revenue.map((height, index) => (
-                                        <div className="chart-bar-column" key={months[index]}>
-                                            <div className={`chart-bar ${index === 11 ? "current" : ""}`} style={{ height: `${height}%` }} />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="chart-months">
-                                {months.map((month) => <span key={month}>{month}</span>)}
-                            </div>
+                            {(dashboardData.activity?.weeks || []).map(w => <div key={w.start} style={{marginBottom:12}}>
+                                <div className="sales-item-label"><span>Săptămâna din {w.start}</span><strong>{w.amount} €</strong></div>
+                                <div className="progress-track"><div className="progress-fill blue" style={{width:(100*w.amount/Math.max(1,...dashboardData.activity.weeks.map(x=>x.amount)))+'%'}} /></div>
+                            </div>)}
+                            <button className="primary-action" onClick={generateBrief} disabled={busy}>{busy ? 'Se pregătește…' : 'Analizează cu Gemini'}</button>
+                            {brief && <div aria-live="polite" style={{marginTop:12}}><strong>{brief.source === 'gemini' ? 'Analiză Gemini' : brief.source === 'local' ? 'Rezumat local · AI indisponibil' : 'Eroare'}</strong><p>{brief.text}</p></div>}
                         </article>
 
                         <article className="panel sales-panel">

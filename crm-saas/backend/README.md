@@ -36,3 +36,8 @@ They cover authentication, invalid payloads, CORS, route registration, tenant is
 - Monthly revenue counts paid invoices created in the current UTC month. The schema has no payment timestamp, so this is an approximation of cash collected during the month.
 
 These changes do not add a payment timestamp, change floating-point money storage or define role-based write policies. Those require product and schema decisions.
+
+## Demo TermoFix
+Run `node scripts/seed-demo.js` from this directory against the intended demo database. It creates a synthetic company with 32 days of records and prints its new account credentials once. Running it again leaves the account intact.
+Configure GEMINI_API_KEY in the backend environment and restart the server for live Gemini briefings. The endpoint sends only four weekly totals and the overdue count. Without a key or when the provider is unavailable the UI labels the response as local.
+For a frontend deployed on a separate origin, set VITE_API_BASE_URL to the backend origin before building. With a shared origin, route /api to Express.
