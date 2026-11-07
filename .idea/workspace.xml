@@ -4,13 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e326d1ae-1387-41dc-bb1e-0e5d3578428c" name="Changes" comment="Backend rparat">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="e326d1ae-1387-41dc-bb1e-0e5d3578428c" name="Changes" comment="business plan">
+      <change afterPath="$PROJECT_DIR$/crm-saas/frontend/businessplan.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -37,6 +44,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
@@ -67,7 +75,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1793980174075</updated>
-      <workItem from="1793980174938" duration="3864000" />
+      <workItem from="1793980174938" duration="4050000" />
     </task>
     <task id="LOCAL-00001" summary="Backend rparat">
       <option name="closed" value="true" />
@@ -77,7 +85,15 @@
       <option name="project" value="LOCAL" />
       <updated>1793981677630</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="business plan">
+      <option name="closed" value="true" />
+      <created>1794057331689</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1794057331689</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -85,6 +101,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Backend rparat" />
-    <option name="LAST_COMMIT_MESSAGE" value="Backend rparat" />
+    <MESSAGE value="business plan" />
+    <option name="LAST_COMMIT_MESSAGE" value="business plan" />
   </component>
 </project>

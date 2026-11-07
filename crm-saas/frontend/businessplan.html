@@ -1,0 +1,1004 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowdesck | 5 Year Business Plan</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0b1020;
+            color: #f4f5fb;
+            font-family: Inter, Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 40px 25px;
+        }
+
+        header {
+            padding: 35px 7% 90px;
+            background: radial-gradient(circle at 80% 20%, #49358b55, transparent 40%),
+            linear-gradient(135deg, #151d35, #0b1020);
+            border-bottom: 1px solid #29334a;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .logo span {
+            background: #8066ed;
+            padding: 7px 12px;
+            border-radius: 9px;
+            margin-right: 8px;
+        }
+
+        .eyebrow {
+            color: #a997ff;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .hero {
+            max-width: 800px;
+            margin-top: 75px;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 7vw, 72px);
+            line-height: 1.1;
+            margin: 20px 0;
+            letter-spacing: -2px;
+        }
+
+        .hero h1 span,
+        .highlight {
+            color: #a997ff;
+        }
+
+        .hero p {
+            color: #9ba6bb;
+            max-width: 650px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #8066ed;
+            color: white;
+            padding: 13px 22px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .section {
+            margin-top: 85px;
+        }
+
+        .section h2 {
+            font-size: 34px;
+            margin: 12px 0;
+        }
+
+        .section-description {
+            color: #9ba6bb;
+            margin-bottom: 30px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: #121a2d;
+            border: 1px solid #29334a;
+            border-radius: 13px;
+            padding: 24px;
+        }
+
+        .card small {
+            color: #9ba6bb;
+        }
+
+        .card h3 {
+            font-size: 34px;
+            margin: 12px 0 5px;
+        }
+
+        .card p {
+            color: #9ba6bb;
+            font-size: 12px;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            background: #121a2d;
+            color: #9ba6bb;
+            border: 1px solid #29334a;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background: #8066ed25;
+            border-color: #8066ed;
+            color: white;
+        }
+
+        .phase {
+            background: #121a2d;
+            border: 1px solid #29334a;
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        .phase-header {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .phase-header h3 {
+            font-size: 27px;
+            margin: 10px 0;
+        }
+
+        .phase-header p {
+            color: #9ba6bb;
+        }
+
+        .target {
+            background: #8066ed20;
+            border: 1px solid #8066ed66;
+            padding: 18px;
+            border-radius: 10px;
+        }
+
+        .target small {
+            display: block;
+            color: #b9aaff;
+        }
+
+        .target strong {
+            font-size: 17px;
+        }
+
+        .tasks {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .task {
+            background: #0b1020;
+            border: 1px solid #29334a;
+            padding: 16px;
+            border-radius: 9px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .task span {
+            color: #a997ff;
+            font-weight: bold;
+        }
+
+        .task p {
+            font-size: 14px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+        }
+
+        .navigation button {
+            background: #29334a;
+            border: none;
+            color: white;
+            padding: 10px 17px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .navigation button:disabled {
+            opacity: .3;
+            cursor: not-allowed;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid #29334a;
+            border-radius: 12px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 750px;
+            border-collapse: collapse;
+            background: #121a2d;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 17px 14px;
+            border-bottom: 1px solid #29334a;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        th {
+            color: #b9aaff;
+        }
+
+        td:first-child {
+            color: #b7c1d3;
+        }
+
+        .positive {
+            color: #4bd6a0;
+        }
+
+        .negative {
+            color: #ff8c98;
+        }
+
+        .chart {
+            margin-top: 30px;
+            background: #121a2d;
+            padding: 25px;
+            border: 1px solid #29334a;
+            border-radius: 13px;
+        }
+
+        .chart h3 {
+            margin-bottom: 25px;
+        }
+
+        .bar-row {
+            display: grid;
+            grid-template-columns: 70px 1fr 100px;
+            gap: 12px;
+            align-items: center;
+            margin: 18px 0;
+            font-size: 12px;
+        }
+
+        .bar-track {
+            height: 10px;
+            background: #29334a;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            background: linear-gradient(90deg, #7055d7, #a997ff);
+            border-radius: 10px;
+        }
+
+        .bar-row strong {
+            text-align: right;
+        }
+
+        .cost-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .cost-card {
+            background: #121a2d;
+            border: 1px solid #29334a;
+            padding: 23px;
+            border-radius: 12px;
+        }
+
+        .cost-card h3 {
+            color: #a997ff;
+            font-size: 25px;
+            margin: 10px 0;
+        }
+
+        .cost-card p {
+            color: #9ba6bb;
+            font-size: 13px;
+        }
+
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .model-grid article {
+            background: #121a2d;
+            border: 1px solid #29334a;
+            padding: 23px;
+            border-radius: 12px;
+        }
+
+        .model-grid article span {
+            color: #a997ff;
+            font-weight: bold;
+        }
+
+        .model-grid h3 {
+            margin: 18px 0 10px;
+        }
+
+        .model-grid p {
+            font-size: 13px;
+            color: #9ba6bb;
+        }
+
+        .note {
+            color: #9ba6bb;
+            font-size: 11px;
+            margin-top: 15px;
+            line-height: 1.7;
+        }
+
+        .final {
+            text-align: center;
+            margin-top: 90px;
+            padding: 70px 25px;
+            border: 1px solid #493c79;
+            border-radius: 17px;
+            background: radial-gradient(circle, #49358b55, #121a2d);
+        }
+
+        .final h2 {
+            font-size: clamp(30px, 5vw, 52px);
+            line-height: 1.2;
+            margin: 20px 0;
+        }
+
+        .final p {
+            color: #9ba6bb;
+        }
+
+        .final strong {
+            display: block;
+            margin-top: 25px;
+            letter-spacing: 3px;
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 40px;
+            padding: 25px 0;
+            border-top: 1px solid #29334a;
+            color: #9ba6bb;
+            font-size: 12px;
+        }
+
+        @media(max-width: 800px) {
+            .stats, .model-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width: 550px) {
+            .stats, .model-grid, .tasks, .cost-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 25px 20px 55px;
+            }
+
+            .container {
+                padding: 35px 16px;
+            }
+
+            .phase {
+                padding: 20px;
+            }
+
+            .bar-row {
+                grid-template-columns: 55px 1fr 75px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <span>F</span> Flowdesck
+    </div>
+
+    <div class="hero">
+        <div class="eyebrow">BUSINESS PLAN 2027 — 2031</div>
+
+        <h1>
+            Building the future of
+            <span>business management.</span>
+        </h1>
+
+        <p>
+            A five-year strategic roadmap to build an
+            affordable, intelligent and industry-specific
+            CRM platform for growing businesses.
+        </p>
+
+        <a href="#roadmap" class="btn">Explore our roadmap →</a>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- OVERVIEW -->
+
+    <section>
+        <div class="eyebrow">01 / BUSINESS OVERVIEW</div>
+        <h2>Our vision, our numbers.</h2>
+        <p class="section-description">
+            Making professional business management accessible to everyone.
+        </p>
+
+        <div class="stats">
+
+            <div class="card">
+                <small>Starting price</small>
+                <h3>$10</h3>
+                <p>Per month</p>
+            </div>
+
+            <div class="card">
+                <small>Included users</small>
+                <h3>04</h3>
+                <p>Per Basic subscription</p>
+            </div>
+
+            <div class="card">
+                <small>Free trial</small>
+                <h3>30</h3>
+                <p>Days (proposed)</p>
+            </div>
+
+            <div class="card">
+                <small>Year 5 target</small>
+                <h3>3,000</h3>
+                <p>Paying companies</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ROADMAP -->
+
+    <section class="section" id="roadmap">
+
+        <div class="eyebrow">02 / GROWTH STRATEGY</div>
+        <h2>Our 5-year roadmap.</h2>
+        <p class="section-description">
+            From a validated MVP to an international SaaS business.
+        </p>
+
+        <div class="tabs" id="tabs"></div>
+
+        <div class="phase">
+
+            <div class="phase-header">
+                <div>
+                    <div class="eyebrow" id="phase-number"></div>
+                    <h3 id="phase-title"></h3>
+                    <p id="phase-status"></p>
+                </div>
+
+                <div class="target">
+                    <small>YEAR TARGET</small>
+                    <strong id="phase-target"></strong>
+                </div>
+            </div>
+
+            <div class="tasks" id="phase-tasks"></div>
+
+            <div class="navigation">
+                <button id="previous">← Previous</button>
+                <span id="phase-counter"></span>
+                <button id="next">Next phase →</button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FINANCIALS -->
+
+    <section class="section">
+
+        <div class="eyebrow">03 / FINANCIAL PROJECTIONS</div>
+        <h2>Designed for sustainable growth.</h2>
+        <p class="section-description">
+            Illustrative five-year financial scenario. All values in USD.
+        </p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Year 1</th>
+                    <th>Year 2</th>
+                    <th>Year 3</th>
+                    <th>Year 4</th>
+                    <th>Year 5</th>
+                </tr>
+                </thead>
+
+                <tbody id="financial-table"></tbody>
+            </table>
+        </div>
+
+        <div class="chart">
+            <h3>Annual revenue growth</h3>
+            <div id="revenue-chart"></div>
+        </div>
+
+        <p class="note">
+            Revenue projections use estimated average paying customers
+            during each year. Operating balances are before taxes,
+            payment processing, AI/API costs, salaries and other
+            unlisted expenses. Marketing and infrastructure costs
+            are planning estimates.
+        </p>
+
+    </section>
+
+    <!-- INITIAL COSTS -->
+
+    <section class="section">
+
+        <div class="eyebrow">04 / INITIAL INVESTMENT</div>
+        <h2>Low initial investment.</h2>
+        <p class="section-description">
+            We develop our own technology and keep initial costs low.
+        </p>
+
+        <div class="cost-grid">
+
+            <div class="cost-card">
+                <small>Hosting – 2 years</small>
+                <h3>$140</h3>
+                <p>Website hosting and infrastructure.</p>
+            </div>
+
+            <div class="cost-card">
+                <small>Domain</small>
+                <h3>$50</h3>
+                <p>Domain registration.</p>
+            </div>
+
+            <div class="cost-card">
+                <small>Total initial investment</small>
+                <h3>$190</h3>
+                <p>Known initial hosting and domain expenses.</p>
+            </div>
+
+        </div>
+
+        <div class="cost-grid" style="margin-top:15px">
+
+            <div class="cost-card">
+                <small>Development</small>
+                <h3>$0 cash</h3>
+                <p>Software developed internally by our team.</p>
+            </div>
+
+            <div class="cost-card">
+                <small>First 6 months marketing</small>
+                <h3>$0</h3>
+                <p>Organic growth and direct outreach.</p>
+            </div>
+
+            <div class="cost-card">
+                <small>Growth strategy</small>
+                <h3>Reinvest</h3>
+                <p>Reinvest part of subscription revenue into growth.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- BUSINESS MODEL -->
+
+    <section class="section">
+
+        <div class="eyebrow">05 / BUSINESS MODEL</div>
+        <h2>Simple. Scalable. Recurring.</h2>
+
+        <div class="model-grid">
+
+            <article>
+                <span>01</span>
+                <h3>Subscription</h3>
+                <p>$10/month for a Basic team of four members.</p>
+            </article>
+
+            <article>
+                <span>02</span>
+                <h3>Additional users</h3>
+                <p>$5/month for each additional member.</p>
+            </article>
+
+            <article>
+                <span>03</span>
+                <h3>AI & Premium</h3>
+                <p>Future premium features and advanced automation.</p>
+            </article>
+
+            <article>
+                <span>04</span>
+                <h3>Global expansion</h3>
+                <p>Scalable subscriptions across European markets.</p>
+            </article>
+
+        </div>
+
+    </section>
+
+    <!-- FINAL -->
+
+    <section class="final">
+
+        <div class="eyebrow">OUR MISSION</div>
+
+        <h2>
+            Big business tools.<br>
+            <span class="highlight">Small business prices.</span>
+        </h2>
+
+        <p>
+            Every business deserves the tools to grow,
+            regardless of its size.
+        </p>
+
+        <strong>FLOWDESCK.COM</strong>
+
+    </section>
+
+    <footer>
+        <span>© Flowdesck 2027–2031</span>
+        <span>Business Plan & Growth Strategy</span>
+    </footer>
+
+</main>
+
+<script>
+
+    // ROADMAP DATA
+
+    const roadmap = [
+        {
+            year: "Months 1–6",
+            phase: "Foundation & MVP",
+            status: "Product development",
+            target: "5–10 pilot companies",
+            tasks: [
+                "Market research and 20+ entrepreneur interviews",
+                "Develop authentication and core CRM modules",
+                "Build clients, projects and task management",
+                "Implement internal chat and calendar",
+                "Launch 3 industry-specific workspaces",
+                "Test MVP with pilot companies and collect feedback"
+            ]
+        },
+        {
+            year: "Months 7–12",
+            phase: "Launch & First Customers",
+            status: "Market entry",
+            target: "50 paying companies",
+            tasks: [
+                "Official Flowdesck.com launch",
+                "Introduce subscriptions and free trial",
+                "Implement customer onboarding",
+                "SEO and digital marketing campaigns",
+                "Direct outreach to small businesses",
+                "Introduce basic workflow automation"
+            ]
+        },
+        {
+            year: "Year 2",
+            phase: "Expansion & AI Integration",
+            status: "Product expansion",
+            target: "200 paying companies",
+            tasks: [
+                "Expand to 5–6 business industries",
+                "Launch Flowdesck AI v1",
+                "Introduce AI-generated reports",
+                "Integrate email and calendar services",
+                "Develop strategic partnerships",
+                "Improve customer retention"
+            ]
+        },
+        {
+            year: "Year 3",
+            phase: "Scaling & Automation",
+            status: "Business growth",
+            target: "600 paying companies",
+            tasks: [
+                "Expand to 8+ industries",
+                "Advanced AI business insights",
+                "Develop mobile experience",
+                "Expand development and support teams",
+                "Improve customer acquisition",
+                "Target operational profitability"
+            ]
+        },
+        {
+            year: "Year 4",
+            phase: "International Expansion",
+            status: "European growth",
+            target: "1,500 paying companies",
+            tasks: [
+                "Localize the platform into multiple languages",
+                "Enter Central and Eastern European markets",
+                "Develop business partnerships",
+                "Launch public API and integrations",
+                "Introduce premium plans",
+                "Scale marketing and customer support"
+            ]
+        },
+        {
+            year: "Year 5",
+            phase: "Market Growth & Maturity",
+            status: "International presence",
+            target: "3,000 paying companies",
+            tasks: [
+                "Support 10+ business industries",
+                "Advanced AI Business Assistant",
+                "Build an integration ecosystem",
+                "Expand into additional European markets",
+                "Introduce enterprise capabilities",
+                "Strengthen recurring revenue and profitability"
+            ]
+        }
+    ];
+
+    let activePhase = 0;
+
+    const tabs = document.getElementById("tabs");
+
+    function renderRoadmap() {
+
+        tabs.innerHTML = "";
+
+        roadmap.forEach((item, index) => {
+
+            const button = document.createElement("button");
+
+            button.className =
+                "tab " + (activePhase === index ? "active" : "");
+
+            button.textContent = item.year;
+
+            button.onclick = () => {
+                activePhase = index;
+                renderRoadmap();
+            };
+
+            tabs.appendChild(button);
+        });
+
+        const phase = roadmap[activePhase];
+
+        document.getElementById("phase-number").textContent =
+            `PHASE ${activePhase + 1} / 6`;
+
+        document.getElementById("phase-title").textContent =
+            phase.phase;
+
+        document.getElementById("phase-status").textContent =
+            phase.status;
+
+        document.getElementById("phase-target").textContent =
+            phase.target;
+
+        document.getElementById("phase-counter").textContent =
+            `${activePhase + 1} / 6`;
+
+        document.getElementById("phase-tasks").innerHTML =
+            phase.tasks.map((task, index) => `
+            <div class="task">
+                <span>${String(index + 1).padStart(2, "0")}</span>
+                <p>${task}</p>
+            </div>
+        `).join("");
+
+        document.getElementById("previous").disabled =
+            activePhase === 0;
+
+        document.getElementById("next").disabled =
+            activePhase === roadmap.length - 1;
+    }
+
+    document.getElementById("previous").onclick = () => {
+        if (activePhase > 0) {
+            activePhase--;
+            renderRoadmap();
+        }
+    };
+
+    document.getElementById("next").onclick = () => {
+        if (activePhase < roadmap.length - 1) {
+            activePhase++;
+            renderRoadmap();
+        }
+    };
+
+    renderRoadmap();
+
+
+    // FINANCIAL PROJECTIONS
+
+    const financials = [
+        {
+            year: "Year 1",
+            clients: 50,
+            arpa: 18,
+            revenue: 5400,
+            marketing: 300,
+            infrastructure: 190
+        },
+        {
+            year: "Year 2",
+            clients: 200,
+            arpa: 20,
+            revenue: 28800,
+            marketing: 1200,
+            infrastructure: 0
+        },
+        {
+            year: "Year 3",
+            clients: 600,
+            arpa: 22,
+            revenue: 105600,
+            marketing: 3000,
+            infrastructure: 0
+        },
+        {
+            year: "Year 4",
+            clients: 1500,
+            arpa: 24,
+            revenue: 302400,
+            marketing: 6000,
+            infrastructure: 0
+        },
+        {
+            year: "Year 5",
+            clients: 3000,
+            arpa: 26,
+            revenue: 702000,
+            marketing: 12000,
+            infrastructure: 0
+        }
+    ];
+
+    const money = value =>
+        "$" + value.toLocaleString("en-US");
+
+    const table = document.getElementById("financial-table");
+
+    const rows = [
+        {
+            label: "Paying companies (year-end)",
+            value: f => f.clients
+        },
+        {
+            label: "Average monthly revenue / company",
+            value: f => money(f.arpa)
+        },
+        {
+            label: "Annual revenue",
+            value: f => money(f.revenue),
+            highlight: true
+        },
+        {
+            label: "Marketing expenses",
+            value: f => money(f.marketing)
+        },
+        {
+            label: "Hosting & domain",
+            value: f => money(f.infrastructure)
+        },
+        {
+            label: "Total known/planned expenses",
+            value: f => money(f.marketing + f.infrastructure)
+        },
+        {
+            label: "Balance before other expenses",
+            value: f => {
+                const balance =
+                    f.revenue - f.marketing - f.infrastructure;
+                return (balance < 0 ? "-" : "+") +
+                    money(Math.abs(balance));
+            },
+            profit: true
+        }
+    ];
+
+    table.innerHTML = rows.map(row => `
+    <tr>
+        <td>${row.label}</td>
+        ${financials.map(f => {
+        const value = row.value(f);
+
+        let className = "";
+
+        if (row.highlight) className = "highlight";
+
+        if (row.profit) {
+            const balance =
+                f.revenue - f.marketing - f.infrastructure;
+
+            className = balance >= 0
+                ? "positive"
+                : "negative";
+        }
+
+        return `<td class="${className}">${value}</td>`;
+    }).join("")}
+    </tr>
+`).join("");
+
+
+    // REVENUE CHART
+
+    const chart = document.getElementById("revenue-chart");
+
+    chart.innerHTML = financials.map(f => `
+    <div class="bar-row">
+        <span>${f.year}</span>
+
+        <div class="bar-track">
+            <div class="bar"
+                style="width:${f.revenue / 702000 * 100}%">
+            </div>
+        </div>
+
+        <strong>${money(f.revenue)}</strong>
+    </div>
+`).join("");
+
+</script>
+
+</body>
+</html>
