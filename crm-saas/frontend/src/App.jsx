@@ -1,3 +1,5 @@
+import Workspace from './Workspace';
+import Settings from './pages/Settings';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Login from './pages/auth/Login';
@@ -16,9 +18,12 @@ function App() {
                 <Route path="/register" element={<Register />} />
 
                 {/* Rutele interne ale aplicației */}
+                <Route element={<Workspace/>}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/contacts" element={<Contacts />} />
                 <Route path="/invoices" element={<Invoices />} />
+            <Route path="/settings" element={<Settings/>}/>
+                </Route>
             </Routes>
         </BrowserRouter>
     );

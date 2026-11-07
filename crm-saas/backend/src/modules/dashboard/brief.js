@@ -16,7 +16,7 @@ export async function brief(req, res, next) {
             const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent', {
                 method:'POST', signal:AbortSignal.timeout(12000),
                 headers:{'Content-Type':'application/json','x-goog-api-key':process.env.GEMINI_API_KEY},
-                body:JSON.stringify({contents:[{parts:[{text:'Scrie în română un briefing de maximum 3 fraze pentru manager. Compară ultima săptămână cu precedenta pe baza valorii în EUR a facturilor plătite după data emiterii. Propune o acțiune concretă. Nu inventa cauze. Date agregate: '+JSON.stringify(data)}]}],
+                body:JSON.stringify({contents:[{parts:[{text:'Scrie în română două fraze pentru managerul firmei care emite facturile către clienți. În prima compară ultimele două valori weeks.amount, în EUR: totalul facturilor emise în săptămâna respectivă care au acum status plătit. Data plății și eventualele întârzieri ale acestor facturi sunt necunoscute. În a doua propune o singură acțiune legată de numărul facturilor deschise marcate scadente (overdue). Folosește exclusiv datele primite. Evită furnizori, aprobări, bugete, ore, termene sau explicații speculative. Date agregate: '+JSON.stringify(data)}]}],
                     generationConfig:{maxOutputTokens:600}})
             });
             if (!response.ok) return offline();

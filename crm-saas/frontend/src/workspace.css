@@ -1,0 +1,16 @@
+.ws {--rail:236px; display:block; min-height:100vh}
+.ws.ws-compact {--rail:78px}
+.ws .dashboard-main {margin-left:var(--rail); min-width:0}
+.ws-side {position:fixed;inset:0 auto 0 0;width:var(--rail);z-index:40;display:flex;flex-direction:column;padding:24px 14px 16px;background:#172b3b;color:#edf6f4;font:500 14px Inter,system-ui,sans-serif;overflow:auto}
+.ws-brand,.ws-links nav a,.ws-tools button {display:flex;align-items:center;gap:12px}
+.ws-brand {padding:0 4px 22px;border-bottom:1px solid #3c505d}.ws-brand strong {font-size:21px;letter-spacing:-.6px}
+.ws-mark {background:#a8e6cf;color:#173e38;display:grid;place-items:center;border-radius:12px;width:40px;height:40px;flex:none}
+.ws-links {display:flex;flex:1;flex-direction:column;padding-top:22px}.ws-links nav {display:grid;gap:6px}
+.ws-links nav a,.ws-tools button,.ws-toggle {color:#cfdfdf;background:transparent;border:0;border-radius:9px;padding:12px;text-decoration:none;font:inherit;cursor:pointer;min-height:44px}
+.ws-links nav a.active {background:#d5f1e6;color:#193e38;font-weight:700}.ws-links nav a:hover:not(.active),.ws-tools button:hover,.ws-toggle:hover {background:#304858;color:white}
+.ws-tools {margin-top:auto;padding-top:16px;display:grid;gap:4px}.ws-tools svg {width:19px}.ws-toggle {display:none;margin-left:auto}
+.ws-task-form {display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;margin:0 0 18px}.ws-task-form>* {min-width:0;max-width:100%}
+.ws .tasks-panel {grid-column:1/-1}.ws-settings {padding:clamp(18px,4vw,52px)}.ws-settings .panel {margin-top:20px;max-width:570px;display:grid;gap:20px}.ws-settings label {display:grid;gap:8px}.ws-settings input {width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:12px;font:inherit}
+@media(min-width:1024px){.ws-compact .ws-side span:not(.ws-mark),.ws-compact .ws-brand strong {display:none}.ws-compact .ws-links a,.ws-compact .ws-tools button {justify-content:center}}
+@media(max-width:1023px){.ws .dashboard-main {margin-left:0}.ws-side {position:sticky;top:0;width:100%;padding:8px 14px;max-height:90dvh}.ws-brand {border:0;padding:0}.ws-toggle {display:grid;place-items:center}.ws-links {display:none}.ws-links.ws-open {display:flex;padding:12px 0 4px}.ws-tools .ws-collapse {display:none}.ws .dashboard-header {position:static}.ws-side .ws-brand strong {font-size:18px}}
+@media(max-width:600px){.ws-task-form {grid-template-columns:minmax(0,1fr) auto}.ws-task-form input {grid-column:1/-1}.ws .contacts-toolbar {flex-wrap:wrap}.ws .dashboard-grid {grid-template-columns:minmax(0,1fr)}.ws .panel {max-width:100%;min-width:0}.ws .task-title {overflow-wrap:anywhere}}

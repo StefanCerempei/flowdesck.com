@@ -1,28 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-    Users,
-    Plus,
-    Search,
-    Mail,
-    Phone,
-    Building2,
-    X,
-    UserRound,
-    RefreshCw,
-    CreditCard,
-    LayoutDashboard,
-    Settings,
-    LogOut,
-    ChevronLeft,
-    ChevronRight,
-    FileText,
-    TrendingUp,
-    Globe,
-    Pencil,
-    Trash2
-} from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import { Users, Plus, Search, Mail, Phone, Building2, X, UserRound, RefreshCw, FileText, TrendingUp, Globe, Pencil, Trash2 } from 'lucide-react';
+
 import axios from 'axios';
 import './Contact.css';
 
@@ -42,7 +21,6 @@ const INITIAL_FORM = {
 
 export default function Contacts() {
     const navigate = useNavigate();
-    const [sidebarOpen, setSidebarOpen] = useState(true);
     const [contacts, setContacts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -197,65 +175,10 @@ export default function Contacts() {
     const getInitials = (contact) =>
         `${contact.firstName?.charAt(0) || ''}${contact.lastName?.charAt(0) || ''}`.toUpperCase() || '?';
 
-    const logout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        navigate('/login');
-    };
 
-    const menu = [
-        { title: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-        { title: 'Clienți & Lead-uri', path: '/contacts', icon: Users },
-        { title: 'Facturi', path: '/invoices', icon: CreditCard },
-        { title: 'Configurare SaaS', path: '/settings', icon: Settings },
-    ];
+
 
     return (
-        <div className={`dashboard-shell contacts-shell ${sidebarOpen ? '' : 'sidebar-collapsed'}`}>
-            <aside className={`dashboard-sidebar ${sidebarOpen ? '' : 'collapsed'}`}>
-                <div className="sidebar-brand">
-                    <div className="sidebar-brand-icon"><LayoutDashboard size={21} /></div>
-                    {sidebarOpen && <span className="sidebar-brand-name">Flowdesck<span>.</span></span>}
-                    <button className="sidebar-collapse" onClick={() => setSidebarOpen((open) => !open)} aria-label={sidebarOpen ? 'Restrânge meniul' : 'Extinde meniul'}>
-                        {sidebarOpen ? <ChevronLeft size={17} /> : <ChevronRight size={17} />}
-                    </button>
-                </div>
-
-                {sidebarOpen && (
-                    <div className="workspace-card">
-                        <span className="workspace-label">COMPANIA TA</span>
-                        <span className="workspace-name">My Workspace</span>
-                        <span className="workspace-status"><span /> Spațiu de lucru activ</span>
-                    </div>
-                )}
-
-                <nav className="sidebar-nav">
-                    {sidebarOpen && <p className="sidebar-section-label">MENIU PRINCIPAL</p>}
-                    {menu.map((item) => {
-                        const Icon = item.icon;
-                        return (
-                            <NavLink key={item.path} to={item.path} title={!sidebarOpen ? item.title : ''}
-                                     className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-                                <Icon size={19} />
-                                {sidebarOpen && <span>{item.title}</span>}
-                            </NavLink>
-                        );
-                    })}
-                </nav>
-
-                <div className="sidebar-bottom">
-                    {sidebarOpen && <div className="pro-card">
-                        <div className="pro-card-top"><span className="pro-sparkle">✦</span><span>FLOWDESCK PRO</span></div>
-                        <h3>Mai mult control. Mai multă creștere.</h3>
-                        <p>Descoperă toate funcționalitățile CRM.</p>
-                        <button onClick={() => navigate('/settings')}>Explorează planurile <span>→</span></button>
-                    </div>}
-                    <button className="logout-button" onClick={logout}>
-                        <LogOut size={19} />{sidebarOpen && <span>Deconectare</span>}
-                    </button>
-                </div>
-            </aside>
-
             <main className="dashboard-main contacts-page">
                 <div className="contacts-container">
                     <header className="contacts-header">
@@ -564,6 +487,5 @@ export default function Contacts() {
                     </div>
                 )}
             </main>
-        </div>
     );
 }

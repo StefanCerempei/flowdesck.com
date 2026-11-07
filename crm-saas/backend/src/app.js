@@ -1,3 +1,4 @@
+import settingsRoutes from './modules/settings.js';
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
@@ -19,6 +20,7 @@ app.use(cors({ origin: allowedOrigins, methods: ['GET', 'POST', 'PUT', 'PATCH', 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.get('/api/health', (req, res) => res.json({ status: 'ok', message: 'API is running' }));
+app.use('/api/settings', settingsRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/tasks', taskRoutes);

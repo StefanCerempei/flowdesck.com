@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import {
-    LayoutDashboard, Users, Settings, LogOut, Menu, Bell, Search,
-    TrendingUp, BarChart3, CreditCard, ChevronLeft, ChevronRight,
-    CheckCircle2, CalendarDays,
-} from "lucide-react";
+import { Users, Bell, TrendingUp, BarChart3, CreditCard, CheckCircle2, CalendarDays } from "lucide-react";
 import "./Dashboard.css";
 
 export default function Dashboard() {
@@ -25,8 +21,6 @@ export default function Dashboard() {
 
     // 1. TOATE HOOK-URILE (STATE) ÎN INTERIORUL FUNCȚIEI
     const [user, setUser] = useState(null);
-    const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [mobileMenu, setMobileMenu] = useState(false);
 
     // State pentru formularul de sarcini noi
     const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -111,11 +105,6 @@ export default function Dashboard() {
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        navigate("/login", { replace: true });
-    };
 
     // 3. EARLY RETURN
     if (!user) {
@@ -130,12 +119,7 @@ export default function Dashboard() {
     const name = user.name || user.email?.split("@")[0] || "Utilizator";
     const initials = name.substring(0, 2).toUpperCase();
 
-    const menu = [
-        { title: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-        { title: "Clienți & Lead-uri", path: "/contacts", icon: Users },
-        { title: "Facturi", path: "/invoices", icon: CreditCard },
-        { title: "Configurare SaaS", path: "/settings", icon: Settings },
-    ];
+
 
     const currentStats = [
         {
@@ -171,64 +155,13 @@ export default function Dashboard() {
         { label: "Clienți Activi", value: dashboardData.salesPipeline.active, color: "green" },
     ];
 
-    const toggleSidebar = () => {
-        if (window.innerWidth < 1024) {
-            setMobileMenu((open) => !open);
-        } else {
-            setSidebarOpen((open) => !open);
-        }
-    };
+
 
     return (
-        <div className={`dashboard-shell ${sidebarOpen ? "" : "sidebar-collapsed"}`}>
-            {mobileMenu && (
-                <button className="dashboard-overlay" aria-label="Închide meniul" onClick={() => setMobileMenu(false)} />
-            )}
-
-            <aside className={`dashboard-sidebar ${mobileMenu ? "mobile-open" : ""} ${sidebarOpen ? "" : "collapsed"}`}>
-                <div className="sidebar-brand">
-                    <div className="sidebar-brand-icon">
-                        <LayoutDashboard size={21} />
-                    </div>
-                    {sidebarOpen && <span className="sidebar-brand-name">Flowdesck<span>.</span></span>}
-                    <button className="sidebar-collapse" onClick={() => setSidebarOpen((open) => !open)}>
-                        {sidebarOpen ? <ChevronLeft size={17} /> : <ChevronRight size={17} />}
-                    </button>
-                </div>
-
-                {sidebarOpen && (
-                    <div className="workspace-card">
-                        <span className="workspace-label">COMPANIA TA</span>
-                        <span className="workspace-name">My Workspace</span>
-                        <span className="workspace-status"><span /> Spațiu de lucru activ</span>
-                    </div>
-                )}
-
-                <nav className="sidebar-nav">
-                    {sidebarOpen && <p className="sidebar-section-label">MENIU PRINCIPAL</p>}
-                    {menu.map((item) => {
-                        const Icon = item.icon;
-                        return (
-                            <NavLink key={item.path} to={item.path} onClick={() => setMobileMenu(false)} className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
-                                <Icon size={19} />
-                                {sidebarOpen && <span>{item.title}</span>}
-                            </NavLink>
-                        );
-                    })}
-                </nav>
-
-                <div className="sidebar-bottom">
-                    <button className="logout-button" onClick={logout}>
-                        <LogOut size={19} />
-                        {sidebarOpen && <span>Deconectare</span>}
-                    </button>
-                </div>
-            </aside>
-
             <main className="dashboard-main">
                 <header className="dashboard-header">
                     <div className="header-left">
-                        <button className="icon-button menu-toggle" onClick={toggleSidebar}><Menu size={21} /></button>
+
                     </div>
 
                     <div className="header-right">
@@ -329,7 +262,7 @@ export default function Dashboard() {
                             </div>
 
                             {/* Formular adăugare sarcină nouă */}
-                            <form onSubmit={handleAddTask} style={{ display: 'flex', gap: '10px', marginBottom: '18px' }}>
+                            <form onSubmit={handleAddTask} className="ws-task-form">
                                 <input
                                     type="text"
                                     value={newTaskTitle}
@@ -379,6 +312,5 @@ export default function Dashboard() {
                     </section>
                 </div>
             </main>
-        </div>
     );
 }
