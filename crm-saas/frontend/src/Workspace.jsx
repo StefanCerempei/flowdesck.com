@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Layers, LayoutDashboard, Users, Receipt, Settings, LogOut, Menu, X, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { CarFront, CalendarDays, Sparkles, Layers, LayoutDashboard, Users, Receipt, Settings, LogOut, Menu, X, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import './workspace.css';
 
 const links = [
     ['/dashboard', 'Dashboard', LayoutDashboard],
-    ['/contacts', 'Clienți și lead-uri', Users],
-    ['/invoices', 'Facturi', Receipt],
-    ['/settings', 'Configurare SaaS', Settings],
+    ['/vehicles', 'Fleet', CarFront],
+    ['/reservations', 'Reservations', CalendarDays],
+    ['/contacts', 'Customers', Users],
+    ['/insights', 'AI Fleet Insights', Sparkles],
+    ['/copilot', 'Booking Copilot', Sparkles],
+    ['/settings', 'Settings', Settings],
 ];
 
 export default function Workspace() {
@@ -32,6 +35,7 @@ export default function Workspace() {
                     <NavLink key={path} to={path} title={label} aria-label={label} onClick={() => setOpenAt(null)}><Icon size={20}/><span>{label}</span></NavLink>
                 )}</nav>
                 <div className="ws-tools">
+                    <NavLink to="/invoices" title="Invoices" className="ws-invoices"><Receipt size={19}/><span>Invoices</span></NavLink>
                     <button className="ws-collapse" aria-label={compact ? 'Extinde meniul' : 'Restrânge meniul'} onClick={() => setCompact(!compact)}>{compact ? <PanelLeftOpen/> : <PanelLeftClose/>}<span>Restrânge meniul</span></button>
                     <button aria-label="Deconectare" onClick={logout}><LogOut/><span>Deconectare</span></button>
                 </div>

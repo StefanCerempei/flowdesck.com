@@ -1,3 +1,7 @@
+import Insights from "./pages/ai/Insights";
+import Vehicles from './pages/vehicles/Vehicles';
+import Reservations from './pages/reservations/Reservations';
+import BookingCopilot from './pages/ai/BookingCopilot';
 import Workspace from './Workspace';
 import Settings from './pages/Settings';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -19,6 +23,10 @@ function App() {
 
                 {/* Rutele interne ale aplicației */}
                 <Route element={<Workspace/>}>
+                <Route path="/vehicles" element={<Vehicles />} />
+                <Route path="/reservations" element={<Reservations />} />
+                <Route path="/insights" element={<Insights />} />
+                <Route path="/copilot" element={<BookingCopilot />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/contacts" element={<Contacts />} />
                 <Route path="/invoices" element={<Invoices />} />

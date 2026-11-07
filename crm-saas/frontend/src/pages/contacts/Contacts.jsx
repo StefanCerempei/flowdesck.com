@@ -48,7 +48,7 @@ export default function Contacts() {
         } catch (error) {
             console.error('Eroare la preluarea contactelor:', error);
             setErrorMessage(
-                error.response?.data?.message ||
+                error.response?.data?.eroare || error.response?.data?.message ||
                 'Nu am putut încărca lista de contacte. Verifică dacă serverul este pornit.'
             );
         } finally {
@@ -140,7 +140,7 @@ export default function Contacts() {
         } catch (error) {
             console.error('Eroare la salvarea contactului:', error);
             setFormError(
-                error.response?.data?.message ||
+                error.response?.data?.eroare || error.response?.data?.message ||
                 'Contactul nu a putut fi salvat. Verifică datele și încearcă din nou.'
             );
         } finally {
@@ -157,7 +157,7 @@ export default function Contacts() {
             await fetchContacts();
         } catch (error) {
             console.error('Eroare la ștergerea contactului:', error);
-            alert('Nu am putut șterge clientul.');
+            alert(error.response?.data?.eroare || 'Nu am putut șterge clientul.');
         }
     };
 

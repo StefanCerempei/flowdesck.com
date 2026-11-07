@@ -106,6 +106,7 @@ export const deleteContact = async (req, res) => {
 
         res.status(200).json({ mesaj: 'Clientul a fost șters cu succes.' });
     } catch (error) {
+        if (error.code === 'P2003') return res.status(409).json({ eroare: 'Clientul are rezervări. Păstrează istoricul și marchează clientul inactiv.' });
         console.error('Eroare la ștergerea clientului:', error);
         res.status(500).json({ eroare: 'Nu am putut șterge clientul.' });
     }

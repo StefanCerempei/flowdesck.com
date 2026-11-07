@@ -9,7 +9,16 @@
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "test:unit": "node --test test/rental-domain.test.js test/ai.test.js test/insights.test.js",
+    "test:integration": "node --test test/backend.test.js test/rentals.integration.test.js",
+    "seed:rental-demo": "node scripts/seed-rental-demo.js",
+    "ai:verify-live": "node scripts/verify-live-ai.js",
+    "demo:capture": "node scripts/demo-scenario.js capture",
+    "demo:restore": "node scripts/demo-scenario.js restore",
+    "demo:access": "node scripts/demo-access.js",
+    "demo:reset-password": "node scripts/demo-access.js --reset",
+    "db:deploy": "prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

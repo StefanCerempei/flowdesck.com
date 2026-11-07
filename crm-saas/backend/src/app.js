@@ -1,3 +1,9 @@
+import insightsRoutes from "./modules/insights/insights.routes.js";
+import aiRoutes from "./modules/ai/ai.routes.js";
+import vehicleRoutes from './modules/vehicles/vehicles.routes.js';
+import reservationRoutes from './modules/reservations/reservations.routes.js';
+import fleetRoutes from './modules/fleet/fleet.routes.js';
+import { rentalErrors } from './lib/rental-errors.js';
 import settingsRoutes from './modules/settings.js';
 import 'dotenv/config';
 import express from 'express';
@@ -21,6 +27,11 @@ app.use(cors({ origin: allowedOrigins, methods: ['GET', 'POST', 'PUT', 'PATCH', 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.get('/api/health', (req, res) => res.json({ status: 'ok', message: 'API is running' }));
+app.use('/api/ai', aiRoutes);
+app.use('/api/ai', insightsRoutes);
+app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/reservations', reservationRoutes);
+app.use('/api/fleet', fleetRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
@@ -30,11 +41,12 @@ app.use('/api/invoices', invoiceRoutes);
 if (process.env.NODE_ENV === 'production') {
     const dist = fileURLToPath(new URL('../../frontend/dist/', import.meta.url));
     app.use(express.static(dist));
-    app.get(['/login', '/register', '/dashboard', '/contacts', '/invoices', '/settings'], (req, res) => {
+    app.get(['/login', '/register', '/dashboard', '/contacts', '/invoices', '/settings', '/vehicles', '/reservations', '/copilot', '/insights'], (req, res) => {
         res.sendFile('index.html', { root: dist });
     });
 }
 app.use((req, res) => res.status(404).json({ eroare: 'Ruta nu există.' }));
+app.use(rentalErrors);
 app.use((error, req, res, next) => {
     if (res.headersSent) return next(error);
     if (error.type === 'entity.parse.failed') return res.status(400).json({ eroare: 'JSON invalid.' });

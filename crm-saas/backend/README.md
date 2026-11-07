@@ -1,13 +1,15 @@
 # Backend development
 
-Use Node.js 22 and MySQL / MariaDB. From `crm-saas`, install the workspaces with `npm ci`.
+Use Node.js 22 and MySQL 8.0.16+ with InnoDB (rental constraints require enforced CHECK support). From `crm-saas`, install the workspaces with `npm ci`.
+**Existing databases:** read [Phase 2 migration/baseline instructions](../../docs/PHASE2_IMPLEMENTATION.md) before any deploy command; the new baseline must not be blindly applied over existing tables. The commands below are for a confirmed empty development/test database.
+
 Copy `backend/.env.example` to `backend/.env`, then set `DATABASE_URL` and a random `JWT_SECRET`.
 
 From `crm-saas/backend`:
 
 ```bash
 npm run db:generate
-npm run db:push
+npm run db:deploy
 npm run dev
 ```
 
@@ -19,7 +21,7 @@ The development frontend runs at `http://localhost:3000`; CORS also permits port
 Use a separate MySQL database, never the production database. Initialize its schema explicitly before running tests:
 
 ```bash
-DATABASE_URL='mysql://USER:PASSWORD@127.0.0.1:3307/flowdesk_test' npm run db:push
+DATABASE_URL='mysql://USER:PASSWORD@127.0.0.1:3307/flowdesk_test' npm run db:deploy
 TEST_DATABASE_URL='mysql://USER:PASSWORD@127.0.0.1:3307/flowdesk_test' npm test
 ```
 
@@ -35,9 +37,15 @@ They cover authentication, invalid payloads, CORS, route registration, tenant is
 - Invoice amounts must be positive finite numbers. Invoice contacts must belong to the caller's company.
 - Monthly revenue counts paid invoices created in the current UTC month. The schema has no payment timestamp, so this is an approximation of cash collected during the month.
 
-These changes do not add a payment timestamp, change floating-point money storage or define role-based write policies. Those require product and schema decisions.
+Legacy invoices retain their floating-point storage and role policies. New rental APIs use Decimal money and ADMIN/SUPER_ADMIN writes.
 
 ## Demo TermoFix
 Run `node scripts/seed-demo.js` from this directory against the intended demo database. It creates a synthetic company with 32 days of records and prints its new account credentials once. Running it again leaves the account intact.
 Configure GEMINI_API_KEY in the backend environment and restart the server for live Gemini briefings. The endpoint sends only four weekly totals and the overdue count. Without a key or when the provider is unavailable the UI labels the response as local.
 For a frontend deployed on a separate origin, set VITE_API_BASE_URL to the backend origin before building. With a shared origin, route /api to Express.
+
+## Rental foundation (Phase 2)
+
+See [implementation and deployment guide](../../docs/PHASE2_IMPLEMENTATION.md) for all API contracts, date/price/state policies, tests, guarded Timiș Rent Demo seed and exact existing-database steps. `npm run test:unit` needs no DB; `npm run test:integration` and `npm test` require a confirmed disposable TEST_DATABASE_URL. From frontend, `npm run test:e2e` runs Chromium tests against a local app using that same disposable DB.
+
+The new dashboard is rental-focused and does not invoke Gemini. `/copilot` is coming soon. Existing CRM briefing API and TermoFix seed are retained. Never run either seed automatically in production.

@@ -1,0 +1,73 @@
+.copilot .r-panel {
+  margin-bottom: 1rem;
+}
+.copilot-grid,
+.copilot-fields,
+.copilot-offers {
+  display: grid;
+  gap: 1rem;
+}
+.copilot-grid {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: start;
+}
+.copilot-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.copilot h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.18rem;
+}
+.copilot textarea {
+  resize: vertical;
+  min-width: 0;
+  font: inherit;
+  padding: 0.8rem;
+  border: 1px solid #cbd9cf;
+  border-radius: 0.6rem;
+}
+.copilot-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.copilot-offers {
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+}
+.copilot-offers article {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid #d8e3db;
+  border-radius: 0.75rem;
+}
+.copilot-offers span {
+  font-size: 0.85rem;
+  color: #455b50;
+}
+.copilot .copilot-confirm {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+.copilot .copilot-confirm input {
+  width: auto;
+}
+@media (max-width: 800px) {
+  .copilot-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 430px) {
+  .copilot-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.copilot-results {
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+.copilot-results > p {
+  margin: 0 0 1rem;
+}

@@ -13,6 +13,8 @@ model Company {
   subscriptionPlan String    @default("FREE")
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
+  vehicles Vehicle[]
+  reservations Reservation[]
   users            User[]
   contacts         Contact[]
   tasks            Task[]
@@ -39,6 +41,8 @@ model Contact {
   company        String?
   status         String    @default("LEAD")
   notes          String?   @db.Text
+  reservations Reservation[]
+  @@unique([tenantId, id])
   potentialValue Float?
   source         String?
   tenantId       String
@@ -77,3 +81,61 @@ model Invoice {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
+enum VehicleStatus {
+  AVAILABLE
+  MAINTENANCE
+  INACTIVE
+}
+enum Transmission {
+  MANUAL
+  AUTOMATIC
+}
+enum ReservationStatus {
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+model Vehicle {
+  id                  String        @id @default(uuid())
+  companyId           String
+  company             Company       @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  brand               String        @db.VarChar(80)
+  model               String        @db.VarChar(80)
+  licensePlate        String        @db.VarChar(32)
+  category            String        @db.VarChar(40)
+  transmission        Transmission
+  dailyRate           Decimal       @db.Decimal(10, 2)
+  status              VehicleStatus @default(AVAILABLE)
+  insuranceExpiration DateTime?     @db.Date
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  reservations        Reservation[]
+
+  @@unique([companyId, licensePlate])
+  @@unique([companyId, id])
+  @@index([companyId, status])
+  @@index([companyId, insuranceExpiration])
+}
+model Reservation {
+  id          String            @id @default(uuid())
+  companyId   String
+  company     Company           @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  vehicleId   String
+  vehicle     Vehicle           @relation(fields: [companyId, vehicleId], references: [companyId, id], onDelete: Restrict, onUpdate: Restrict)
+  contactId   String
+  contact     Contact           @relation(fields: [companyId, contactId], references: [tenantId, id], onDelete: Restrict, onUpdate: Restrict)
+  startDate   DateTime           @db.Date
+  endDate     DateTime           @db.Date
+  status      ReservationStatus @default(CONFIRMED)
+  agreedTotal Decimal           @db.Decimal(12, 2)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([companyId, vehicleId, status, startDate, endDate])
+  @@index([companyId, status, endDate])
+  @@index([companyId, startDate])
+  @@index([companyId, contactId])
+}
+// Add to existing Company: vehicles Vehicle[], reservations Reservation[]
+// Add to existing Contact: reservations Reservation[], @@unique([tenantId, id])
