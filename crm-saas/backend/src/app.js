@@ -1,6 +1,7 @@
 import settingsRoutes from './modules/settings.js';
 import 'dotenv/config';
 import express from 'express';
+import { fileURLToPath } from 'node:url';
 import cors from 'cors';
 import helmet from 'helmet';
 import authRoutes from '../routes/auth.js';
@@ -26,6 +27,13 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/invoices', invoiceRoutes);
+if (process.env.NODE_ENV === 'production') {
+    const dist = fileURLToPath(new URL('../../frontend/dist/', import.meta.url));
+    app.use(express.static(dist));
+    app.get(['/login', '/register', '/dashboard', '/contacts', '/invoices', '/settings'], (req, res) => {
+        res.sendFile('index.html', { root: dist });
+    });
+}
 app.use((req, res) => res.status(404).json({ eroare: 'Ruta nu există.' }));
 app.use((error, req, res, next) => {
     if (res.headersSent) return next(error);

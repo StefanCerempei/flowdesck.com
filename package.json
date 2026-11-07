@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm ci --prefix crm-saas --include=dev && npm run build --prefix crm-saas",
+    "start": "node index.js"
   },
   "private": true
 }
