@@ -1,11 +1,12 @@
+import { sessionToken, sessionUser } from "../lib/session";
 import { useLanguage } from "../i18n";
 import { useEffect, useState } from "react";
 import { PageHeader } from "../components/RentalUI";
-import axios from "axios";
+import { api } from "../lib/api";
 
-const url = (import.meta.env.VITE_API_BASE_URL || "") + "/api/settings";
+
 const auth = () => ({
-  headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+  headers: { Authorization: "Bearer " + sessionToken() },
 });
 export default function Settings() {
   const { t: tr } = useLanguage();
@@ -14,12 +15,12 @@ export default function Settings() {
   const [message, setMessage] = useState("");
   const [saving, setSaving] = useState(false);
   const canEdit = ["ADMIN", "SUPER_ADMIN"].includes(
-    JSON.parse(localStorage.getItem("user") || "{}")?.role,
+    sessionUser()?.role,
   );
   useEffect(() => {
     const controller = new AbortController();
-    axios
-      .get(url, { ...auth(), signal: controller.signal })
+    api
+      .get("/settings", { ...auth(), signal: controller.signal })
       .then(({ data }) => {
         setCompany(data);
         setName(data.name);
@@ -35,7 +36,7 @@ export default function Settings() {
     setSaving(true);
     setMessage("");
     try {
-      const { data } = await axios.patch(url, { name }, auth());
+      const { data } = await api.patch("/settings", { name }, auth());
       setCompany(data);
       setName(data.name);
       setMessage("Modificările au fost salvate.");

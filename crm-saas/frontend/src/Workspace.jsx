@@ -1,3 +1,4 @@
+import { sessionToken, isDemoGuest, clearSession } from "./lib/session";
 import { useState } from "react";
 import {
   NavLink,
@@ -43,10 +44,9 @@ export default function Workspace() {
   const [openAt, setOpenAt] = useState(null);
   const [compact, setCompact] = useState(false);
   const open = openAt === pathname;
-  if (!localStorage.getItem("token")) return <Navigate to="/login" replace />;
+  if (!sessionToken()) return <Navigate to="/login" replace />;
   function logout() {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
+    clearSession();
     navigate("/login", { replace: true });
   }
   return (
@@ -119,6 +119,7 @@ export default function Workspace() {
           </div>
         </div>
       </aside>
+      <div className="demo-banner" hidden={!isDemoGuest()} role="status">{t("Demo Mode — Read Only")} · {t("Saving is restricted in demo mode.")}</div>
       <Outlet />
     </div>
   );

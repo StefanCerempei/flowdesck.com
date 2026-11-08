@@ -1,3 +1,4 @@
+import { sessionToken } from "../lib/session";
 import { Link } from "react-router-dom";
 import { Layers } from "lucide-react";
 import { LanguageSwitch, useLanguage } from "../i18n";
@@ -14,9 +15,9 @@ export default function PublicHeader() {
         <LanguageSwitch />
         <Link
           className="r-button secondary"
-          to={localStorage.getItem("token") ? "/dashboard" : "/login"}
+          to={sessionToken() ? "/dashboard" : "/login"}
         >
-          {t(localStorage.getItem("token") ? "Dashboard" : "Sign in")}
+          {t(sessionToken() ? "Dashboard" : "Sign in")}
         </Link>
       </nav>
     </header>

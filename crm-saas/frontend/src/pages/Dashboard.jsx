@@ -1,3 +1,4 @@
+import { isDemoGuest } from "../lib/session";
 import { useLanguage, format, findingDescription, calendarDate } from "../i18n";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -287,7 +288,7 @@ export default function Dashboard() {
                 </small>
               </div>
               <ErrorNotice message={taskError} />
-              <form className="r-task-form" onSubmit={addTask}>
+              <fieldset disabled={isDemoGuest()} className="demo-task-fields"><form className="r-task-form" onSubmit={addTask}>
                 <input
                   aria-label={tr("New task")}
                   placeholder={tr(
@@ -306,10 +307,10 @@ export default function Dashboard() {
                   <option value="Normal">{tr("Normal")}</option>
                   <option value="Urgent">{tr("Urgent")}</option>
                 </select>
-                <button className="r-button" disabled={busy}>
+                <button className="r-button" disabled={busy || isDemoGuest()}>
                   {tr("Add task")}{" "}
                 </button>
-              </form>
+              </form></fieldset>
               <ul className="r-list">
                 {data.tasks.map((t) => (
                   <li key={t.id}>
@@ -320,7 +321,7 @@ export default function Dashboard() {
                         aria-label={tr("Complete ") + t.title}
                         type="checkbox"
                         checked={t.completed}
-                        disabled={busy}
+                        disabled={busy || isDemoGuest()}
                         onChange={() => toggle(t.id)}
                       />
                       {t.title}

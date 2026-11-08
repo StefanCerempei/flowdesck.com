@@ -346,3 +346,6 @@
 }
 /* Keep the visually hidden action heading inside a scrollable table. */
 .r-table-wrap { position:relative }
+.demo-banner{margin-left:var(--rail);padding:12px 24px;background:#e6efc9;color:#304516;font-size:13px}
+.demo-banner[hidden]{display:none}.demo-task-fields{border:0;margin:0;padding:0;min-width:0}
+@media(max-width:1023px){.demo-banner{margin-left:0}}

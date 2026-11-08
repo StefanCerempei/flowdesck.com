@@ -1,3 +1,4 @@
+import Demo from "./pages/Demo";
 import Insights from "./pages/ai/Insights";
 import Vehicles from "./pages/vehicles/Vehicles";
 import Reservations from "./pages/reservations/Reservations";
@@ -16,6 +17,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Ruta principală publică acum duce spre Landing Page */}
+        <Route path="/demo" element={<Demo />} />
         <Route path="/" element={<Landing />} />
 
         <Route path="/business-plan" element={<BusinessPlan />} />

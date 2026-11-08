@@ -1,9 +1,10 @@
+import { sessionToken, isDemoGuest } from "../../lib/session";
 import { useLanguage, currentLocale, localizedError } from "../../i18n";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Plus, RefreshCw } from "lucide-react";
 
-import axios from "axios";
+import { api } from "../../lib/api";
 import {
   PageHeader,
   Modal,
@@ -13,8 +14,6 @@ import {
 } from "../../components/RentalUI";
 import { euros } from "../../lib/api";
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL || ""}/api/invoices`;
-const CONTACTS_API_URL = `${import.meta.env.VITE_API_BASE_URL || ""}/api/contacts`;
 
 const INITIAL_FORM = {
   invoiceNumber: "",
@@ -38,7 +37,7 @@ export default function Invoices() {
   const [formData, setFormData] = useState(INITIAL_FORM);
 
   const getAxiosConfig = () => {
-    const token = localStorage.getItem("token");
+    const token = sessionToken();
     return {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     };
@@ -50,8 +49,8 @@ export default function Invoices() {
 
     try {
       const [invoicesRes, contactsRes] = await Promise.all([
-        axios.get(API_URL, getAxiosConfig()),
-        axios.get(CONTACTS_API_URL, getAxiosConfig()),
+        api.get("/invoices", getAxiosConfig()),
+        api.get("/contacts", getAxiosConfig()),
       ]);
       setInvoices(Array.isArray(invoicesRes.data) ? invoicesRes.data : []);
       setContacts(Array.isArray(contactsRes.data) ? contactsRes.data : []);
@@ -118,7 +117,7 @@ export default function Invoices() {
     };
 
     try {
-      await axios.post(API_URL, payload, getAxiosConfig());
+      await api.post("/invoices", payload, getAxiosConfig());
       setIsModalOpen(false);
       setFormData(INITIAL_FORM);
       await fetchData();
@@ -140,7 +139,7 @@ export default function Invoices() {
       return;
 
     try {
-      await axios.delete(`${API_URL}/${id}`, getAxiosConfig());
+      await api.delete(`/invoices/${id}`, getAxiosConfig());
       await fetchData();
     } catch (error) {
       alert(tr("Nu am putut șterge factura."));
@@ -168,6 +167,7 @@ export default function Invoices() {
       >
         <button
           className="r-button"
+          disabled={isDemoGuest()}
           onClick={() => {
             setFormData(INITIAL_FORM);
             setFormError("");
@@ -258,7 +258,7 @@ export default function Invoices() {
                         <small>{inv.dueDate}</small>
                       </td>
                       <td>
-                        <button
+                        <button disabled={isDemoGuest()}
                           className="r-text-link danger-link"
                           onClick={() => handleDeleteInvoice(inv.id)}
                         >

@@ -1,3 +1,4 @@
+import { offlineDemoProvider } from "../../lib/public-demo.js";
 import { Router } from "express";
 import { protectRoute } from "../../middleware/auth.middleware.js";
 import { RentalError, route } from "../../lib/rental-errors.js";
@@ -26,7 +27,7 @@ router.post(
     budgets.set(companyId, budget);
     res.set("Cache-Control", "no-store");
     res.json(
-      await propose(companyId, req.body, req.app.locals.bookingProvider),
+      await propose(companyId, req.body, req.demoGuest ? offlineDemoProvider : req.app.locals.bookingProvider),
     );
   }),
 );

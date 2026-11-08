@@ -1,7 +1,8 @@
+import { sessionToken, isDemoGuest } from "../../lib/session";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Plus, RefreshCw } from "lucide-react";
-import axios from "axios";
+import { api } from "../../lib/api";
 import {
   PageHeader,
   ErrorNotice,
@@ -21,7 +22,6 @@ const sources = {
   "Cold Call": "Cold call",
   Altele: "Other",
 };
-const API_URL = `${import.meta.env.VITE_API_BASE_URL || ""}/api/contacts`;
 
 const INITIAL_FORM = {
   firstName: "",
@@ -49,7 +49,7 @@ export default function Contacts() {
   const [formData, setFormData] = useState(INITIAL_FORM);
 
   const getAxiosConfig = () => {
-    const token = localStorage.getItem("token");
+    const token = sessionToken();
     return {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     };
@@ -60,7 +60,7 @@ export default function Contacts() {
     setErrorMessage("");
 
     try {
-      const response = await axios.get(API_URL, getAxiosConfig());
+      const response = await api.get("/contacts", getAxiosConfig());
       setContacts(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       setErrorMessage(
@@ -148,9 +148,9 @@ export default function Contacts() {
 
     try {
       if (editingId) {
-        await axios.put(`${API_URL}/${editingId}`, formData, getAxiosConfig());
+        await api.put(`/contacts/${editingId}`, formData, getAxiosConfig());
       } else {
-        await axios.post(API_URL, formData, getAxiosConfig());
+        await api.post("/contacts", formData, getAxiosConfig());
       }
       setIsModalOpen(false);
       setEditingId(null);
@@ -172,7 +172,7 @@ export default function Contacts() {
     if (!window.confirm(t("Delete this customer?"))) return;
 
     try {
-      await axios.delete(`${API_URL}/${id}`, getAxiosConfig());
+      await api.delete(`/contacts/${id}`, getAxiosConfig());
       await fetchContacts();
     } catch (error) {
       setErrorMessage(
@@ -189,7 +189,7 @@ export default function Contacts() {
           "Manage customer details and open their rental history.",
         )}
       >
-        <button className="r-button" onClick={openAddModal}>
+        <button className="r-button" disabled={isDemoGuest()} onClick={openAddModal}>
           <Plus size={18} />
           {t("Add customer")}
         </button>
@@ -289,13 +289,13 @@ export default function Contacts() {
                       </td>
                       <td>
                         <div className="r-actions">
-                          <button
+                          <button disabled={isDemoGuest()}
                             className="r-text-link"
                             onClick={() => openEditModal(c)}
                           >
                             {t("Edit")}
                           </button>
-                          <button
+                          <button disabled={isDemoGuest()}
                             className="r-text-link danger-link"
                             onClick={() => handleDeleteContact(c.id)}
                           >

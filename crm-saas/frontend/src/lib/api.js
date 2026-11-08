@@ -1,10 +1,11 @@
 import { currentLocale } from "../i18n";
+import { sessionToken, sessionUser, isDemoGuest, clearSession } from "./session";
 import axios from "axios";
 export const api = axios.create({
   baseURL: (import.meta.env.VITE_API_BASE_URL || "") + "/api",
 });
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const token = sessionToken();
   if (token) config.headers.Authorization = "Bearer " + token;
   return config;
 });
@@ -12,9 +13,9 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      window.location.assign("/login");
+      const demo = isDemoGuest();
+      clearSession();
+      window.location.assign(demo ? "/demo" : "/login");
     }
     return Promise.reject(error);
   },
@@ -26,7 +27,7 @@ export const errorMessage = (error) =>
 export function canManage() {
   try {
     return ["ADMIN", "SUPER_ADMIN"].includes(
-      JSON.parse(localStorage.getItem("user") || "{}").role,
+      sessionUser().role,
     );
   } catch {
     return false;

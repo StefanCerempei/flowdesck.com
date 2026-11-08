@@ -464,7 +464,17 @@
     "Update the expired rental period before pickup.": "Actualizează perioada expirată înainte de predare.",
     "Rental cannot start before its start day.": "Vehiculul poate fi predat începând cu data preluării.",
     "Administrator access required.": "Este necesar acces de administrator.",
-    "{0} priority · {1}": "Prioritate {0} · {1}"
+    "{0} priority · {1}": "Prioritate {0} · {1}",
+    "Demo Mode — Read Only": "Mod demo — doar vizualizare",
+    "Saving is restricted in demo mode.": "Salvarea este restricționată în modul demo.",
+    "Demo unavailable": "Demo indisponibil",
+    "Opening your demo…": "Se deschide demonstrația…",
+    "The public demo is currently unavailable. Please try again later.": "Demonstrația publică este momentan indisponibilă. Încearcă din nou mai târziu.",
+    "Preparing a read-only tour of Timiș Rent Demo.": "Se pregătește accesul pentru vizualizarea Timiș Rent Demo.",
+    "Home": "Acasă",
+    "Demo is busy. Please try again shortly.": "Demonstrația este solicitată intens. Încearcă din nou în curând.",
+    "Demo Mode — Read Only. Saving is restricted.": "Mod demo — doar vizualizare. Salvarea este restricționată.",
+    "Demo session expired. Open /demo to start again.": "Sesiunea demo a expirat. Deschide /demo pentru a începe din nou."
   },
   "en": {
     "Meniu principal": "Main menu",

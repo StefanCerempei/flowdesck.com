@@ -1,3 +1,5 @@
+import publicDemo from './modules/public-demo.js';
+import { protectRoute } from './middleware/auth.middleware.js';
 import insightsRoutes from "./modules/insights/insights.routes.js";
 import aiRoutes from "./modules/ai/ai.routes.js";
 import vehicleRoutes from './modules/vehicles/vehicles.routes.js';
@@ -27,6 +29,9 @@ app.use(cors({ origin: allowedOrigins, methods: ['GET', 'POST', 'PUT', 'PATCH', 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.get('/api/health', (req, res) => res.json({ status: 'ok', message: 'API is running' }));
+app.use('/api/demo', publicDemo);
+// Authenticate bearer requests before every API handler, including legacy and future routes.
+app.use('/api', (req,res,next) => req.header('Authorization') ? protectRoute(req,res,next) : next());
 app.use('/api/ai', aiRoutes);
 app.use('/api/ai', insightsRoutes);
 app.use('/api/vehicles', vehicleRoutes);
@@ -41,7 +46,7 @@ app.use('/api/invoices', invoiceRoutes);
 if (process.env.NODE_ENV === 'production') {
     const dist = fileURLToPath(new URL('../../frontend/dist/', import.meta.url));
     app.use(express.static(dist));
-    app.get(['/login', '/register', '/dashboard', '/contacts', '/invoices', '/settings', '/vehicles', '/reservations', '/copilot', '/insights', '/business-plan'], (req, res) => {
+    app.get(['/login', '/register', '/dashboard', '/contacts', '/invoices', '/settings', '/vehicles', '/reservations', '/copilot', '/insights', '/business-plan', '/demo'], (req, res) => {
         res.sendFile('index.html', { root: dist });
     });
 }

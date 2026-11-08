@@ -24,6 +24,7 @@ export default function AuthPage({ register = false }) {
         body,
       );
       if (!register) {
+        sessionStorage.removeItem("flowdesck.demo");
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
       }

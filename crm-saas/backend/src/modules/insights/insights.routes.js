@@ -1,3 +1,4 @@
+import { offlineDemoProvider } from "../../lib/public-demo.js";
 import { Router } from "express";
 import { protectRoute } from "../../middleware/auth.middleware.js";
 import { route, RentalError } from "../../lib/rental-errors.js";
@@ -31,7 +32,7 @@ router.post(
     budget.count++;
     budgets.set(id, budget);
     res.set("Cache-Control", "no-store");
-    res.json(await explain(id, req.body, req.app.locals.insightsProvider));
+    res.json(await explain(id, req.body, req.demoGuest ? offlineDemoProvider : req.app.locals.insightsProvider));
   }),
 );
 export default router;
