@@ -1,7 +1,8 @@
+import { useLanguage, calendarDate } from "../../i18n";
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Plus, Pencil, ArrowUpRight, CarFront } from "lucide-react";
-import { api, allPages, errorMessage, canManage } from "../../lib/api";
+import { euros, api, allPages, errorMessage, canManage } from "../../lib/api";
 import {
   Badge,
   PageHeader,
@@ -22,6 +23,7 @@ const initial = {
   insuranceExpiration: "",
 };
 export default function Vehicles() {
+  const { t: tr } = useLanguage();
   const [params, setParams] = useSearchParams();
   const [rows, setRows] = useState([]),
     [summary, setSummary] = useState(null),
@@ -128,17 +130,20 @@ export default function Vehicles() {
       (!status || v.status === status) &&
       ([v.brand, v.model].some((x) =>
         x.toLowerCase().includes(search.toLowerCase().trim()),
-      ) || v.licensePlate.toLowerCase().includes(search.toLowerCase().replace(/[\s-]/g, ""))),
+      ) ||
+        v.licensePlate
+          .toLowerCase()
+          .includes(search.toLowerCase().replace(/[\s-]/g, ""))),
   );
   return (
     <main className="dashboard-main r-page">
       <PageHeader
-        title="Your fleet, in focus."
-        description="Manage the vehicles that move your business forward."
+        title={tr("Your fleet, in focus.")}
+        description={tr("Manage the vehicles that move your business forward.")}
       >
         {manage && (
           <button className="r-button" onClick={() => open(null)}>
-            <Plus size={17} /> Add vehicle
+            <Plus size={17} /> {tr("Add vehicle")}{" "}
           </button>
         )}
       </PageHeader>
@@ -156,46 +161,52 @@ export default function Vehicles() {
                 ["Inactive", summary?.INACTIVE],
               ].map(([label, value]) => (
                 <div className="r-stat" key={label}>
-                  <span>{label}</span>
+                  <span>{tr(label)}</span>
                   <strong>{value}</strong>
-                  <small>Operational status · not date availability</small>
+                  <small>
+                    {tr("Operational status · not date availability")}
+                  </small>
                 </div>
               ))}
             </div>
             {!manage && (
               <p className="r-readonly">
-                Read-only access. An administrator can manage vehicles.
+                {tr(
+                  "Read-only access. An administrator can manage vehicles.",
+                )}{" "}
               </p>
             )}
             <section className="r-panel">
               <div className="r-panel-title">
                 <div>
-                  <h2>Fleet directory</h2>
-                  <p>{filtered.length} vehicles · EUR daily rates</p>
+                  <h2>{tr("Fleet directory")}</h2>
+                  <p>
+                    {filtered.length} {tr("vehicles · EUR daily rates")}
+                  </p>
                 </div>
                 <CarFront size={22} color="#568270" />
               </div>
               <div className="r-toolbar">
                 <label>
-                  Search fleet
+                  {tr("Search fleet")}{" "}
                   <input
                     type="search"
-                    aria-label="Search fleet"
-                    placeholder="Brand, model or plate…"
+                    aria-label={tr("Search fleet")}
+                    placeholder={tr("Brand, model or plate…")}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </label>
                 <label>
-                  Operational status
+                  {tr("Operational status")}{" "}
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                   >
-                    <option value="">All statuses</option>
-                    <option value="AVAILABLE">Operational</option>
-                    <option>MAINTENANCE</option>
-                    <option>INACTIVE</option>
+                    <option value="">{tr("All statuses")}</option>
+                    <option value="AVAILABLE">{tr("Operational")}</option>
+                    <option value="MAINTENANCE">{tr("MAINTENANCE")}</option>
+                    <option value="INACTIVE">{tr("INACTIVE")}</option>
                   </select>
                 </label>
               </div>
@@ -204,12 +215,12 @@ export default function Vehicles() {
                   <table className="r-table">
                     <thead>
                       <tr>
-                        <th>Vehicle</th>
-                        <th>Category</th>
-                        <th>Transmission</th>
-                        <th>Daily rate</th>
-                        <th>Status</th>
-                        <th>Manage</th>
+                        <th>{tr("Vehicle")}</th>
+                        <th>{tr("Category")}</th>
+                        <th>{tr("Transmission")}</th>
+                        <th>{tr("Daily rate")}</th>
+                        <th>{tr("Status")}</th>
+                        <th>{tr("Manage")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -221,15 +232,15 @@ export default function Vehicles() {
                             </strong>
                             <small>{v.licensePlate}</small>
                           </td>
-                          <td>{v.category}</td>
+                          <td>{tr(v.category)}</td>
                           <td>
                             {v.transmission === "AUTOMATIC"
-                              ? "Automatic"
-                              : "Manual"}
+                              ? tr("Automatic")
+                              : tr("Manual")}
                           </td>
                           <td>
-                            <strong>€{v.dailyRate}</strong>
-                            <small>per calendar day</small>
+                            <strong>{euros(v.dailyRate)}</strong>
+                            <small>{tr("per calendar day")}</small>
                           </td>
                           <td>
                             <Badge value={v.status} />
@@ -238,15 +249,15 @@ export default function Vehicles() {
                             <div className="r-actions">
                               <button
                                 className="r-text-link"
-                                aria-label={"View " + v.licensePlate}
+                                aria-label={tr("View ") + v.licensePlate}
                                 onClick={() => setParams({ vehicleId: v.id })}
                               >
-                                Details <ArrowUpRight size={15} />
+                                {tr("Details")} <ArrowUpRight size={15} />
                               </button>
                               {manage && (
                                 <button
                                   className="r-icon"
-                                  aria-label={"Edit " + v.licensePlate}
+                                  aria-label={tr("Edit ") + v.licensePlate}
                                   onClick={() => open(v)}
                                 >
                                   <Pencil size={14} />
@@ -262,12 +273,16 @@ export default function Vehicles() {
               ) : (
                 <Empty
                   title={
-                    rows.length ? "No matching vehicles" : "Build your fleet"
+                    rows.length
+                      ? tr("No matching vehicles")
+                      : tr("Build your fleet")
                   }
                   description={
                     rows.length
-                      ? "Try another search or status."
-                      : "Add your first vehicle to start accepting reservations."
+                      ? tr("Try another search or status.")
+                      : tr(
+                          "Add your first vehicle to start accepting reservations.",
+                        )
                   }
                 />
               )}
@@ -277,7 +292,7 @@ export default function Vehicles() {
       )}
       {editing && (
         <Modal
-          title={editing === "new" ? "Add a vehicle" : "Edit vehicle"}
+          title={editing === "new" ? tr("Add a vehicle") : tr("Edit vehicle")}
           onClose={() => setEditing(null)}
           busy={busy}
         >
@@ -290,7 +305,7 @@ export default function Vehicles() {
                 ["licensePlate", "License plate"],
               ].map(([name, label]) => (
                 <label key={name}>
-                  {label}
+                  {tr(label)}
                   <input
                     name={name}
                     required
@@ -301,26 +316,28 @@ export default function Vehicles() {
                 </label>
               ))}
               <label>
-                Category
+                {tr("Category")}{" "}
                 <select name="category" value={form.category} onChange={change}>
                   {["ECONOMY", "COMPACT", "SUV", "VAN"].map((x) => (
-                    <option key={x}>{x}</option>
+                    <option key={x} value={x}>
+                      {tr(x)}
+                    </option>
                   ))}
                 </select>
               </label>
               <label>
-                Transmission
+                {tr("Transmission")}{" "}
                 <select
                   name="transmission"
                   value={form.transmission}
                   onChange={change}
                 >
-                  <option>MANUAL</option>
-                  <option>AUTOMATIC</option>
+                  <option value="MANUAL">{tr("MANUAL")}</option>
+                  <option value="AUTOMATIC">{tr("AUTOMATIC")}</option>
                 </select>
               </label>
               <label>
-                Daily rate · EUR
+                {tr("Daily rate · EUR")}{" "}
                 <input
                   name="dailyRate"
                   type="number"
@@ -333,15 +350,17 @@ export default function Vehicles() {
                 />
               </label>
               <label>
-                Operational status
+                {tr("Operational status")}{" "}
                 <select name="status" value={form.status} onChange={change}>
                   {["AVAILABLE", "MAINTENANCE", "INACTIVE"].map((x) => (
-                    <option key={x}>{x}</option>
+                    <option key={x} value={x}>
+                      {tr(x)}
+                    </option>
                   ))}
                 </select>
               </label>
               <label>
-                Insurance expires (optional)
+                {tr("Insurance expires (optional)")}{" "}
                 <input
                   name="insuranceExpiration"
                   type="date"
@@ -351,9 +370,9 @@ export default function Vehicles() {
               </label>
             </div>
             <p className="r-note">
-              Operational vehicles may already be reserved. Use Reservations to
-              check an actual date range. Keep historical vehicles by marking
-              them inactive.
+              {tr(
+                "Operational vehicles may already be reserved. Use Reservations to check an actual date range. Keep historical vehicles by marking them inactive.",
+              )}{" "}
             </p>
             <div className="r-form-footer">
               <button
@@ -362,17 +381,17 @@ export default function Vehicles() {
                 disabled={busy}
                 onClick={() => setEditing(null)}
               >
-                Cancel
+                {tr("Cancel")}{" "}
               </button>
               <button className="r-button" disabled={busy}>
-                {busy ? "Saving…" : "Save vehicle"}
+                {busy ? tr("Saving…") : tr("Save vehicle")}
               </button>
             </div>
           </form>
         </Modal>
       )}
       {detailId && (
-        <Modal title="Vehicle details" onClose={() => setParams({})}>
+        <Modal title={tr("Vehicle details")} onClose={() => setParams({})}>
           {detailLoading ? (
             <Loading />
           ) : (
@@ -387,31 +406,32 @@ export default function Vehicles() {
                   <dl>
                     {[
                       ["License plate", detail.licensePlate],
-                      ["Daily rate", "€" + detail.dailyRate],
-                      ["Category", detail.category],
-                      ["Transmission", detail.transmission],
+                      ["Daily rate", euros(detail.dailyRate)],
+                      ["Category", tr(detail.category)],
+                      ["Transmission", tr(detail.transmission)],
                       [
                         "Insurance expiration",
-                        detail.insuranceExpiration || "Not recorded",
+                        calendarDate(detail.insuranceExpiration) ||
+                          tr("Not recorded"),
                       ],
                     ].map(([k, v]) => (
                       <div key={k}>
-                        <dt>{k}</dt>
+                        <dt>{tr(k)}</dt>
                         <dd>{v}</dd>
                       </div>
                     ))}
                   </dl>
-                  <h3>Reservation history</h3>
+                  <h3>{tr("Reservation history")}</h3>
                   {history.length ? (
                     <ReservationTable items={history} />
                   ) : (
-                    <p className="r-note">No reservations yet.</p>
+                    <p className="r-note">{tr("No reservations yet.")}</p>
                   )}
                   <Link
                     className="r-text-link"
                     to={"/reservations?vehicleId=" + detail.id}
                   >
-                    Open reservations <ArrowUpRight size={16} />
+                    {tr("Open reservations")} <ArrowUpRight size={16} />
                   </Link>
                 </div>
               )}

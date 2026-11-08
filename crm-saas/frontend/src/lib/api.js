@@ -1,3 +1,4 @@
+import { currentLocale } from "../i18n";
 import axios from "axios";
 export const api = axios.create({
   baseURL: (import.meta.env.VITE_API_BASE_URL || "") + "/api",
@@ -58,6 +59,6 @@ export function nextDay(date) {
   return d.toISOString().slice(0, 10);
 }
 export const euros = (value) =>
-  new Intl.NumberFormat("en-IE", { style: "currency", currency: "EUR" }).format(
+  new Intl.NumberFormat(currentLocale(), { style: "currency", currency: "EUR" }).format(
     value,
   );

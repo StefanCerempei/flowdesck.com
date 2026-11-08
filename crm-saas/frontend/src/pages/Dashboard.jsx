@@ -1,3 +1,4 @@
+import { useLanguage, format, findingDescription, calendarDate } from "../i18n";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Plus, ArrowUpRight, CarFront } from "lucide-react";
@@ -12,6 +13,7 @@ import {
 } from "../components/RentalUI";
 import "./Dashboard.css";
 export default function Dashboard() {
+  const { t: tr } = useLanguage();
   const [data, setData] = useState(null),
     [error, setError] = useState(""),
     [loading, setLoading] = useState(true),
@@ -70,12 +72,14 @@ export default function Dashboard() {
   return (
     <main className="dashboard-main r-page">
       <PageHeader
-        eyebrow={data?.company || "RENTAL OPERATIONS"}
-        title="A clear view of the road ahead."
-        description="Your fleet, bookings and daily priorities — together."
+        eyebrow={data?.company || tr("RENTAL OPERATIONS")}
+        title={tr("A clear view of the road ahead.")}
+        description={tr(
+          "Your fleet, bookings and daily priorities — together.",
+        )}
       >
         <Link className="r-button" to="/reservations">
-          <Plus size={17} /> Manage reservations
+          <Plus size={17} /> {tr("Manage reservations")}{" "}
         </Link>
       </PageHeader>
       <ErrorNotice message={error} />
@@ -87,7 +91,7 @@ export default function Dashboard() {
             load();
           }}
         >
-          Retry
+          {tr("Retry")}{" "}
         </button>
       )}
       {loading ? (
@@ -96,12 +100,6 @@ export default function Dashboard() {
         data &&
         !error && (
           <>
-            <section className="r-panel r-form">
-              <h2>Fleet Intelligence</h2>
-              <p>{data.intelligence.summary.insightsCount} operational alerts · {data.intelligence.summary.highSeverityCount} high priority</p>
-              <p>{data.intelligence.insights[0]?.description || "No operational alerts detected."}</p>
-              <Link to="/insights">Review Fleet Intelligence</Link>
-            </section>
             <div className="r-stats">
               {[
                 [
@@ -117,44 +115,71 @@ export default function Dashboard() {
                 [
                   "Upcoming bookings",
                   data.stats.upcomingPickups,
-                  `${data.valuePeriod.from} → ${data.valuePeriod.to} (exclusive)`,
+                  format(
+                    "{0} → {1} (exclusive)",
+                    calendarDate(data.valuePeriod.from),
+                    calendarDate(data.valuePeriod.to),
+                  ),
                 ],
                 [
                   "Available today",
                   data.stats.availableToday,
-                  `${data.availabilityPeriod.startDate} → ${data.availabilityPeriod.endDate} (exclusive)`,
+                  format(
+                    "{0} → {1} (exclusive)",
+                    calendarDate(data.availabilityPeriod.startDate),
+                    calendarDate(data.availabilityPeriod.endDate),
+                  ),
                 ],
               ].map(([label, value, note]) => (
                 <div className="r-stat" key={label}>
-                  <span>{label}</span>
+                  <span>{tr(label)}</span>
                   <strong>{value}</strong>
-                  <small>{note}</small>
+                  <small>{tr(note)}</small>
                 </div>
               ))}
             </div>
             <p className="r-note" style={{ marginBottom: 22 }}>
-              Operating day: {data.today} · {data.timezone} · availability
-              calculated from stored bookings.{" "}
+              {tr("Operating day:")} {calendarDate(data.today)} ·{" "}
+              {data.timezone}{" "}
+              {tr("· availability calculated from stored bookings.")}{" "}
               {data.stats.overdueReturns > 0
-                ? `${data.stats.overdueReturns} return(s) need follow-up.`
+                ? format(
+                    "{0} return(s) need follow-up.",
+                    data.stats.overdueReturns,
+                  )
                 : ""}
             </p>
+            <section className="r-panel r-form">
+              <h2>{tr("Fleet Intelligence")}</h2>
+              <p>
+                {data.intelligence.summary.insightsCount}{" "}
+                {tr("operational alerts ·")}{" "}
+                {data.intelligence.summary.highSeverityCount}{" "}
+                {tr("high priority")}
+              </p>
+              <p>
+                {data.intelligence.insights[0]
+                  ? findingDescription(data.intelligence.insights[0])
+                  : tr("No operational alerts detected.")}
+              </p>
+              <Link to="/insights">{tr("Review Fleet Intelligence")}</Link>
+            </section>
             <section className="r-panel">
               <div className="r-panel-title">
                 <div>
-                  <h2>Recent reservations</h2>
-                  <p>Real bookings across your fleet</p>
+                  <h2>{tr("Recent reservations")}</h2>
+                  <p>{tr("Real bookings across your fleet")}</p>
                 </div>
                 <Link className="r-text-link" to="/reservations">
-                  View all <ArrowUpRight size={16} />
+                  {tr("View all")} <ArrowUpRight size={16} />
                 </Link>
               </div>
               {data.recentReservations.length ? (
                 <ReservationTable items={data.recentReservations} />
               ) : (
                 <Empty
-                  title="Ready for your first reservation"
-                  description="Add a vehicle and a customer to begin."
+                  title={tr("Ready for your first reservation")}
+                  description={tr("Add a vehicle and a customer to begin.")}
                 />
               )}
             </section>
@@ -162,9 +187,11 @@ export default function Dashboard() {
               <section className="r-panel">
                 <div className="r-panel-title">
                   <div>
-                    <h2>Upcoming returns</h2>
+                    <h2>{tr("Upcoming returns")}</h2>
                     <p>
-                      Vehicles currently on rent · earlier dates need follow-up
+                      {tr(
+                        "Vehicles currently on rent · earlier dates need follow-up",
+                      )}{" "}
                     </p>
                   </div>
                 </div>
@@ -182,17 +209,17 @@ export default function Dashboard() {
                           </small>
                         </div>
                         <div>
-                          <strong>{r.endDate}</strong>
+                          <strong>{calendarDate(r.endDate)}</strong>
                           <small>
                             {r.endDate <= data.today
-                              ? "Return follow-up required"
-                              : "Scheduled return"}
+                              ? tr("Return follow-up required")
+                              : tr("Scheduled return")}
                           </small>
                           <Link
                             className="r-text-link"
                             to={"/reservations?reservationId=" + r.id}
                           >
-                            Open booking
+                            {tr("Open booking")}{" "}
                           </Link>
                         </div>
                       </li>
@@ -200,16 +227,18 @@ export default function Dashboard() {
                   </ul>
                 ) : (
                   <Empty
-                    title="No vehicles out"
-                    description="Active rentals will appear here."
+                    title={tr("No vehicles out")}
+                    description={tr("Active rentals will appear here.")}
                   />
                 )}
               </section>
               <section className="r-panel">
                 <div className="r-panel-title">
                   <div>
-                    <h2>Fleet attention</h2>
-                    <p>Operational status and insurance within 30 days</p>
+                    <h2>{tr("Fleet attention")}</h2>
+                    <p>
+                      {tr("Operational status and insurance within 30 days")}
+                    </p>
                   </div>
                   <CarFront size={20} />
                 </div>
@@ -227,7 +256,8 @@ export default function Dashboard() {
                           <small>
                             {v.licensePlate}
                             {v.insuranceExpiration
-                              ? " · Insurance: " + v.insuranceExpiration
+                              ? tr(" · Insurance: ") +
+                                calendarDate(v.insuranceExpiration)
                               : ""}
                           </small>
                         </div>
@@ -237,8 +267,10 @@ export default function Dashboard() {
                   </ul>
                 ) : (
                   <Empty
-                    title="Nothing flagged"
-                    description="Check vehicle records regularly; missing insurance dates are not proof of coverage."
+                    title={tr("Nothing flagged")}
+                    description={tr(
+                      "Check vehicle records regularly; missing insurance dates are not proof of coverage.",
+                    )}
                   />
                 )}
               </section>
@@ -246,34 +278,36 @@ export default function Dashboard() {
             <section className="r-panel">
               <div className="r-panel-title">
                 <div>
-                  <h2>Team tasks</h2>
-                  <p>Keep the next action close</p>
+                  <h2>{tr("Team tasks")}</h2>
+                  <p>{tr("Keep the next action close")}</p>
                 </div>
                 <small>
                   {data.tasks.filter((t) => t.completed).length}/
-                  {data.tasks.length} completed
+                  {data.tasks.length} {tr("completed")}{" "}
                 </small>
               </div>
               <ErrorNotice message={taskError} />
               <form className="r-task-form" onSubmit={addTask}>
                 <input
-                  aria-label="New task"
-                  placeholder="Add a follow-up, vehicle check or reminder…"
+                  aria-label={tr("New task")}
+                  placeholder={tr(
+                    "Add a follow-up, vehicle check or reminder…",
+                  )}
                   required
                   maxLength={191}
                   value={task}
                   onChange={(e) => setTask(e.target.value)}
                 />
                 <select
-                  aria-label="Task priority"
+                  aria-label={tr("Task priority")}
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
                 >
-                  <option>Normal</option>
-                  <option>Urgent</option>
+                  <option value="Normal">{tr("Normal")}</option>
+                  <option value="Urgent">{tr("Urgent")}</option>
                 </select>
                 <button className="r-button" disabled={busy}>
-                  Add task
+                  {tr("Add task")}{" "}
                 </button>
               </form>
               <ul className="r-list">
@@ -283,7 +317,7 @@ export default function Dashboard() {
                       className={"r-task-label" + (t.completed ? " done" : "")}
                     >
                       <input
-                        aria-label={"Complete " + t.title}
+                        aria-label={tr("Complete ") + t.title}
                         type="checkbox"
                         checked={t.completed}
                         disabled={busy}
@@ -291,7 +325,7 @@ export default function Dashboard() {
                       />
                       {t.title}
                     </label>
-                    <span className="r-badge">{t.priority}</span>
+                    <span className="r-badge">{tr(t.priority)}</span>
                   </li>
                 ))}
               </ul>

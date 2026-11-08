@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useLanguage, calendarDate } from "../../i18n";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Sparkles, CalendarDays, Copy, Check } from "lucide-react";
-import { api, canManage, errorMessage } from "../../lib/api";
+import { euros, api, canManage, errorMessage } from "../../lib/api";
 import { PageHeader, ErrorNotice } from "../../components/RentalUI";
 import "./Copilot.css";
 
@@ -25,9 +26,10 @@ const fields = [
 ];
 
 export default function BookingCopilot() {
-  const [inquiry, setInquiry] = useState(""),
-    [locale, setLocale] = useState("ro-RO");
-  const [result, setResult] = useState(null),
+  const [inquiry, setInquiry] = useState("");
+  const { t: tr, locale, setLanguage } = useLanguage();
+  const setLocale = (value) => setLanguage(value === "ro-RO" ? "ro" : "en");
+  const [analysis, setResult] = useState(null),
     [details, setDetails] = useState({});
   const [dirty, setDirty] = useState(false),
     [draft, setDraft] = useState(""),
@@ -39,6 +41,13 @@ export default function BookingCopilot() {
   const [busy, setBusy] = useState(""),
     [error, setError] = useState(""),
     [saved, setSaved] = useState(null);
+  const result = analysis?.locale === locale ? analysis : null;
+  useEffect(() => {
+    setResult(null);
+    setSelected(null);
+    setConfirmed(false);
+    setError("");
+  }, [locale]);
   function clearSelection() {
     setSelected(null);
     setConfirmed(false);
@@ -67,7 +76,7 @@ export default function BookingCopilot() {
         locale,
         ...(manual ? { manual: true, clarifications: details } : {}),
       });
-      setResult(data);
+      setResult({ ...data, locale });
       setDetails(data.extracted);
       setDraft(data.replyDraft);
       setDirty(false);
@@ -102,7 +111,9 @@ export default function BookingCopilot() {
       ) {
         invalidate();
         setError(
-          "This offer changed. Refresh offers to check the current inventory.",
+          tr(
+            "This offer changed. Refresh offers to check the current inventory.",
+          ),
         );
         return;
       }
@@ -135,7 +146,9 @@ export default function BookingCopilot() {
       setError(
         e.response
           ? errorMessage(e)
-          : "Booking response unavailable. Check Reservations before retrying.",
+          : tr(
+              "Booking response unavailable. Check Reservations before retrying.",
+            ),
       );
     } finally {
       setBusy("");
@@ -146,37 +159,39 @@ export default function BookingCopilot() {
       await navigator.clipboard.writeText(draft);
       setCopied(true);
     } catch {
-      setError("Clipboard unavailable. Select and copy the draft manually.");
+      setError(
+        tr("Clipboard unavailable. Select and copy the draft manually."),
+      );
     }
   }
   return (
     <main className="dashboard-main r-page copilot">
       <PageHeader
-        title="AI Booking Copilot"
-        description="Turn customer inquiries into booking-ready offers."
+        title={tr("AI Booking Copilot")}
+        description={tr("Turn customer inquiries into booking-ready offers.")}
       />
       <ErrorNotice message={error} />
       {saved && (
         <div className="r-panel" role="status">
-          <Check size={16} /> Reservation saved for {saved.contact.firstName}{" "}
-          {saved.contact.lastName}.{" "}
+          <Check size={16} /> {tr("Reservation saved for")}{" "}
+          {saved.contact.firstName} {saved.contact.lastName}.{" "}
           <Link to={"/reservations?reservationId=" + saved.id}>
-            View reservation
+            {tr("View reservation")}{" "}
           </Link>
         </div>
       )}
       <div className="copilot-grid">
         <section className="r-panel r-form">
-          <h2>Customer inquiry</h2>
+          <h2>{tr("Customer inquiry")}</h2>
           <label>
-            Message
+            {tr("Message")}{" "}
             <textarea
               rows={6}
               maxLength={2000}
               value={inquiry}
               disabled={!!busy}
               onChange={(e) => changeInquiry(e.target.value)}
-              placeholder="Paste the customer's rental request…"
+              placeholder={tr("Paste the customer's rental request…")}
             />
           </label>
           <div className="copilot-examples">
@@ -187,15 +202,16 @@ export default function BookingCopilot() {
                 className="r-text-link"
                 onClick={() => {
                   changeInquiry(msg);
-                  setLocale(lang);
                 }}
               >
-                {lang === "ro-RO" ? "Romanian example" : "English example"}
+                {lang === "ro-RO"
+                  ? tr("Romanian example")
+                  : tr("English example")}
               </button>
             ))}
           </div>
           <label>
-            Reply language
+            {tr("Reply language")}{" "}
             <select
               value={locale}
               disabled={!!busy}
@@ -204,8 +220,8 @@ export default function BookingCopilot() {
                 changeInquiry(inquiry);
               }}
             >
-              <option value="ro-RO">Română</option>
-              <option value="en-GB">English</option>
+              <option value="ro-RO">{tr("Română")}</option>
+              <option value="en-GB">{tr("English")}</option>
             </select>
           </label>
           <button
@@ -214,25 +230,27 @@ export default function BookingCopilot() {
             onClick={() => analyze()}
           >
             <Sparkles size={16} />
-            {busy === "analysis" ? "Analyzing…" : "Analyze inquiry"}
+            {busy === "analysis" ? tr("Analyzing…") : tr("Analyze inquiry")}
           </button>
         </section>
         <section className="r-panel r-form">
-          <h2>Rental details</h2>
+          <h2>{tr("Rental details")}</h2>
           {!result ? (
             <p>
-              Analyze an inquiry to review the dates, preferences and budget.
+              {tr(
+                "Analyze an inquiry to review the dates, preferences and budget.",
+              )}{" "}
             </p>
           ) : (
             <>
               <strong>
-                {
+                {tr(
                   {
                     gemini: "Gemini extraction",
                     local: "Manual assisted search",
                     test: "Test provider",
-                  }[result.source]
-                }
+                  }[result.source],
+                )}
               </strong>
               {result.warnings.map((w) => (
                 <p key={w}>{w}</p>
@@ -243,19 +261,21 @@ export default function BookingCopilot() {
               <div className="copilot-fields">
                 {fields.map(([key, label, type]) => (
                   <label key={key}>
-                    {label}
+                    {tr(label)}
                     {!dirty &&
                       result.missingFields.includes(key) &&
-                      " · required"}
+                      tr(" · required")}
                     {Array.isArray(type) ? (
                       <select
                         disabled={!!busy}
                         value={details[key] || ""}
                         onChange={(e) => changeField(key, e.target.value)}
                       >
-                        <option value="">Any</option>
+                        <option value="">{tr("Any")}</option>
                         {type.map((x) => (
-                          <option key={x}>{x}</option>
+                          <option key={x} value={x}>
+                            {tr(x)}
+                          </option>
                         ))}
                       </select>
                     ) : (
@@ -276,7 +296,7 @@ export default function BookingCopilot() {
                 onClick={() => analyze(true)}
               >
                 <CalendarDays size={16} />
-                Refresh offers
+                {tr("Refresh offers")}{" "}
               </button>
             </>
           )}
@@ -285,11 +305,13 @@ export default function BookingCopilot() {
       {result && !dirty && (
         <>
           <section className="r-panel copilot-results">
-            <h2>Available vehicles</h2>
+            <h2>{tr("Available vehicles")}</h2>
             {result.checkedAt && (
               <p>
-                Checked {new Date(result.checkedAt).toLocaleTimeString()} ·{" "}
-                {details.startDate} – {details.endDate} · Europe/Bucharest
+                {tr("Checked")}{" "}
+                {new Date(result.checkedAt).toLocaleTimeString(locale)} ·{" "}
+                {calendarDate(details.startDate)} –{" "}
+                {calendarDate(details.endDate)} · Europe/Bucharest
               </p>
             )}
             {!result.offers.length && (
@@ -302,15 +324,24 @@ export default function BookingCopilot() {
                     {o.brand} {o.model}
                   </strong>
                   <span>
-                    {o.category} · {o.transmission}
+                    {tr(o.category)} · {tr(o.transmission)}
                   </span>
                   <span>
-                    Available · €{o.dailyRate}/day × {o.billedDays} days
+                    {tr("Available · ")}
+                    {euros(o.dailyRate)}
+                    {tr("/day ×")} {o.billedDays} {tr("days")}{" "}
                   </span>
-                  <strong>€{o.total} total</strong>
+                  <strong>
+                    {euros(o.total)} {tr("total")}
+                  </strong>
                   {!!o.mismatches.length && (
                     <span>
-                      Alternative · different {o.mismatches.join(", ")}
+                      {tr("Alternative · different")}{" "}
+                      {o.mismatches
+                        .map((key) =>
+                          tr({brand:"Brand", model:"Model", category:"Category", transmission:"Transmission"}[key] || key),
+                        )
+                        .join(", ")}
                     </span>
                   )}
                   {canManage() && (
@@ -320,8 +351,8 @@ export default function BookingCopilot() {
                       onClick={() => select(o)}
                     >
                       {selected?.vehicleId === o.vehicleId
-                        ? "Selected"
-                        : "Select vehicle"}
+                        ? tr("Selected")
+                        : tr("Select vehicle")}
                     </button>
                   )}
                 </article>
@@ -330,15 +361,16 @@ export default function BookingCopilot() {
           </section>
           {selected && (
             <section className="r-panel r-form">
-              <h2>Review booking</h2>
+              <h2>{tr("Review booking")}</h2>
               <p>
-                {selected.brand} {selected.model} · {details.startDate} –{" "}
-                {details.endDate} · EUR {selected.total}
+                {selected.brand} {selected.model} ·{" "}
+                {calendarDate(details.startDate)} –{" "}
+                {calendarDate(details.endDate)} · {euros(selected.total)}
               </p>
               <label>
-                Customer
+                {tr("Customer")}{" "}
                 <select
-                  aria-label="Customer"
+                  aria-label={tr("Customer")}
                   disabled={!!busy}
                   value={customer}
                   onChange={(e) => {
@@ -346,7 +378,7 @@ export default function BookingCopilot() {
                     setConfirmed(false);
                   }}
                 >
-                  <option value="">Select a customer</option>
+                  <option value="">{tr("Select a customer")}</option>
                   {contacts.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.firstName} {c.lastName}
@@ -354,7 +386,9 @@ export default function BookingCopilot() {
                   ))}
                 </select>
               </label>
-              {!contacts.length && <Link to="/contacts">Add a customer</Link>}
+              {!contacts.length && (
+                <Link to="/contacts">{tr("Add a customer")}</Link>
+              )}
               <label className="copilot-confirm">
                 <input
                   type="checkbox"
@@ -362,21 +396,21 @@ export default function BookingCopilot() {
                   disabled={!!busy || !customer}
                   onChange={(e) => setConfirmed(e.target.checked)}
                 />
-                I confirm the customer, vehicle, dates and total.
+                {tr("I confirm the customer, vehicle, dates and total.")}{" "}
               </label>
               <button
                 className="r-button"
                 disabled={!!busy || !confirmed || !customer}
                 onClick={book}
               >
-                {busy === "booking" ? "Saving…" : "Confirm reservation"}
+                {busy === "booking" ? tr("Saving…") : tr("Confirm reservation")}
               </button>
             </section>
           )}
           <section className="r-panel r-form">
-            <h2>Customer reply</h2>
+            <h2>{tr("Customer reply")}</h2>
             <label>
-              Editable draft
+              {tr("Editable draft")}{" "}
               <textarea
                 rows={4}
                 value={draft}
@@ -392,12 +426,14 @@ export default function BookingCopilot() {
               onClick={copy}
             >
               <Copy size={16} />
-              {copied ? "Copied" : "Copy reply"}
+              {copied ? tr("Copied") : tr("Copy reply")}
             </button>
           </section>
         </>
       )}
-      {busy === "quote" && <p role="status">Checking the selected offer…</p>}
+      {busy === "quote" && (
+        <p role="status">{tr("Checking the selected offer…")}</p>
+      )}
     </main>
   );
   function changeField(key, value) {

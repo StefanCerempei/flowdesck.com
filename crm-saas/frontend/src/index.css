@@ -1,38 +1,22 @@
-/* Importăm un font modern și curat (Inter) foarte popular în aplicațiile SaaS */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@import "tailwindcss";
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-/* Directivele de bază Tailwind */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Aplicăm fontul global */
-@layer base {
-    html {
-        font-family: 'Inter', system-ui, sans-serif;
-    }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
-
-/* --- Scrollbar Customizat (Aspect Premium) --- */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
 }
-
-::-webkit-scrollbar-track {
-    background: transparent;
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
-
-::-webkit-scrollbar-thumb {
-    background: #cbd5e1; /* echivalentul text-slate-300 */
-    border-radius: 10px;
+button,
+a {
+  touch-action: manipulation;
 }
-
-::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8; /* echivalentul text-slate-400 */
+button:not(:disabled) {
+  cursor: pointer;
 }

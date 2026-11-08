@@ -1,8 +1,10 @@
+import { useLanguage, format, currentLocale } from "../../i18n";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Plus, Search, ArrowUpRight } from "lucide-react";
 import {
   api,
+  euros,
   allPages,
   errorMessage,
   canManage,
@@ -20,6 +22,7 @@ import {
 } from "../../components/RentalUI";
 const statuses = ["CONFIRMED", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
 export default function Reservations() {
+  const { t: tr } = useLanguage();
   const [params, setParams] = useSearchParams(),
     manage = canManage();
   const [items, setItems] = useState([]),
@@ -43,6 +46,7 @@ export default function Reservations() {
     [action, setAction] = useState(null),
     [actionError, setActionError] = useState("");
   const generation = useRef(0);
+  const customerFilter = params.get("contactId");
   const vehicleId = params.get("vehicleId"),
     reservationId = params.get("reservationId");
   async function load(signal) {
@@ -58,7 +62,12 @@ export default function Reservations() {
         },
         signal,
       );
-      if (!signal?.aborted) setItems(rows);
+      if (!signal?.aborted)
+        setItems(
+          customerFilter
+            ? rows.filter((row) => row.contactId === customerFilter)
+            : rows,
+        );
     } catch (e) {
       if (!signal?.aborted) setError(errorMessage(e));
     } finally {
@@ -69,7 +78,7 @@ export default function Reservations() {
     const c = new AbortController();
     load(c.signal);
     return () => c.abort();
-  }, [filter, vehicleId, reservationId]);
+  }, [filter, vehicleId, reservationId, customerFilter]);
   function resetOffers() {
     generation.current++;
     setOffers(null);
@@ -137,7 +146,7 @@ export default function Reservations() {
       if (editing) {
         const offer = offers?.items.find((x) => x.vehicle.id === selected);
         if (!offer || !confirmed)
-          throw new Error("Check the new price and confirm before saving.");
+          throw new Error(tr("Check the new price and confirm before saving."));
         await api.patch("/reservations/" + editing.id, {
           startDate: start,
           endDate: end,
@@ -147,7 +156,7 @@ export default function Reservations() {
       } else {
         const offer = offers?.items.find((x) => x.vehicle.id === selected);
         if (!offer || !confirmed)
-          throw new Error("Choose a verified offer and confirm.");
+          throw new Error(tr("Choose a verified offer and confirm."));
         await api.post("/reservations", {
           vehicleId: selected,
           contactId,
@@ -188,36 +197,43 @@ export default function Reservations() {
   return (
     <main className="dashboard-main r-page">
       <PageHeader
-        title="Every booking, in order."
-        description="Real availability. Clear prices. No overlapping reservations."
+        title={tr("Every booking, in order.")}
+        description={tr(
+          "Real availability. Clear prices. No overlapping reservations.",
+        )}
       >
         {manage && (
           <button className="r-button" onClick={create}>
-            <Plus size={17} /> New reservation
+            <Plus size={17} /> {tr("New reservation")}{" "}
           </button>
         )}
       </PageHeader>
       <p className="r-note">
-        Calendar days · Europe/Bucharest · start included, end excluded. A 10–12
-        rental is billed for 2 days.
+        {tr(
+          "Calendar days · Europe/Bucharest · start included, end excluded. A 10–12 rental is billed for 2 days.",
+        )}{" "}
       </p>
       {!manage && (
         <p className="r-readonly">
-          Read-only access. An administrator can manage reservations.
+          {tr(
+            "Read-only access. An administrator can manage reservations.",
+          )}{" "}
         </p>
       )}
       <ErrorNotice message={error} />
       <section className="r-panel" style={{ marginTop: 20 }}>
         <div className="r-panel-title">
           <div>
-            <h2>Reservations</h2>
+            <h2>{tr("Reservations")}</h2>
             <p>
-              {loading ? "Fetching bookings…" : `${items.length} reservations`}
+              {loading
+                ? tr("Fetching bookings…")
+                : format("{0} reservations", items.length)}
             </p>
           </div>
-          {(vehicleId || reservationId) && (
+          {(vehicleId || reservationId || customerFilter) && (
             <button className="r-text-link" onClick={() => setParams({})}>
-              Clear selected record
+              {tr("Clear selected record")}{" "}
             </button>
           )}
         </div>
@@ -226,7 +242,7 @@ export default function Reservations() {
           onSubmit={(e) => {
             e.preventDefault();
             if ((from && !to) || (!from && to)) {
-              setError("Choose both rental-period dates.");
+              setError(tr("Choose both rental-period dates."));
               return;
             }
             setFilter({
@@ -236,36 +252,36 @@ export default function Reservations() {
           }}
         >
           <label>
-            Status
+            {tr("Status")}{" "}
             <select value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="">All statuses</option>
+              <option value="">{tr("All statuses")}</option>
               {statuses.map((x) => (
                 <option value={x} key={x}>
-                  {labels[x]}
+                  {tr(labels[x])}
                 </option>
               ))}
             </select>
           </label>
           <label>
-            Period start
+            {tr("Period start")}{" "}
             <input
-              aria-label="Filter period start"
+              aria-label={tr("Filter period start")}
               type="date"
               value={from}
               onChange={(e) => setFrom(e.target.value)}
             />
           </label>
           <label>
-            Period end (exclusive)
+            {tr("Period end (exclusive)")}{" "}
             <input
-              aria-label="Filter period end"
+              aria-label={tr("Filter period end")}
               type="date"
               value={to}
               onChange={(e) => setTo(e.target.value)}
             />
           </label>
           <button className="r-button secondary">
-            <Search size={15} /> Apply filters
+            <Search size={15} /> {tr("Apply filters")}{" "}
           </button>
           <button
             type="button"
@@ -277,7 +293,7 @@ export default function Reservations() {
               setFilter({});
             }}
           >
-            Reset
+            {tr("Reset")}{" "}
           </button>
         </form>
         {loading ? (
@@ -292,7 +308,7 @@ export default function Reservations() {
                   {manage && r.status === "CONFIRMED" && (
                     <>
                       <button className="r-text-link" onClick={() => edit(r)}>
-                        Edit dates
+                        {tr("Edit dates")}{" "}
                       </button>
                       <button
                         className="r-text-link"
@@ -301,7 +317,7 @@ export default function Reservations() {
                           setActionError("");
                         }}
                       >
-                        Start rental
+                        {tr("Start rental")}{" "}
                       </button>
                       <button
                         className="r-text-link"
@@ -310,7 +326,7 @@ export default function Reservations() {
                           setActionError("");
                         }}
                       >
-                        Cancel
+                        {tr("Cancel")}{" "}
                       </button>
                     </>
                   )}
@@ -322,12 +338,12 @@ export default function Reservations() {
                         setActionError("");
                       }}
                     >
-                      Confirm return
+                      {tr("Confirm return")}{" "}
                     </button>
                   )}
                   <Link
                     className="r-text-link"
-                    aria-label={"Vehicle " + r.vehicle.licensePlate}
+                    aria-label={tr("Vehicle ") + r.vehicle.licensePlate}
                     to={"/vehicles?vehicleId=" + r.vehicleId}
                   >
                     <ArrowUpRight size={16} />
@@ -337,15 +353,19 @@ export default function Reservations() {
             />
           ) : (
             <Empty
-              title="No reservations to show"
-              description="Create a booking or adjust the current filters."
+              title={tr("No reservations to show")}
+              description={tr(
+                "Create a booking or adjust the current filters.",
+              )}
             />
           ))
         )}
       </section>
       {open && (
         <Modal
-          title={editing ? "Change rental dates" : "Create a reservation"}
+          title={
+            editing ? tr("Change rental dates") : tr("Create a reservation")
+          }
           busy={busy}
           onClose={() => {
             generation.current++;
@@ -356,9 +376,9 @@ export default function Reservations() {
             <ErrorNotice message={formError} />
             {!editing && (
               <label>
-                Customer
+                {tr("Customer")}{" "}
                 <select
-                  aria-label="Customer"
+                  aria-label={tr("Customer")}
                   required
                   value={contactId}
                   onChange={(e) => {
@@ -367,7 +387,7 @@ export default function Reservations() {
                   }}
                   disabled={busy}
                 >
-                  <option value="">Select an existing customer</option>
+                  <option value="">{tr("Select an existing customer")}</option>
                   {contacts.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.firstName} {c.lastName}
@@ -377,17 +397,17 @@ export default function Reservations() {
                 </select>
                 {!contacts.length && (
                   <small>
-                    No customers?{" "}
-                    <Link to="/contacts">Add a customer first.</Link>
+                    {tr("No customers?")}{" "}
+                    <Link to="/contacts">{tr("Add a customer first.")}</Link>
                   </small>
                 )}
               </label>
             )}
             <div className="r-form-grid">
               <label>
-                Rental start
+                {tr("Rental start")}{" "}
                 <input
-                  aria-label="Rental start"
+                  aria-label={tr("Rental start")}
                   type="date"
                   required
                   min={editing ? undefined : operatingToday()}
@@ -400,9 +420,9 @@ export default function Reservations() {
                 />
               </label>
               <label>
-                Rental end (exclusive)
+                {tr("Rental end (exclusive)")}{" "}
                 <input
-                  aria-label="Rental end (exclusive)"
+                  aria-label={tr("Rental end (exclusive)")}
                   type="date"
                   required
                   min={start ? nextDay(start) : undefined}
@@ -416,15 +436,17 @@ export default function Reservations() {
               </label>
             </div>
             <p className="r-note">
-              EUR · Europe/Bucharest calendar dates. Availability is checked
-              again when you save.
+              {tr(
+                "EUR · Europe/Bucharest calendar dates. Availability is checked again when you save.",
+              )}{" "}
             </p>
             {editing && (
               <p className="r-note">
-                Vehicle remains {editing.vehicle.brand} {editing.vehicle.model}{" "}
-                ({editing.vehicle.licensePlate}). The server recalculates the
-                total at the current daily rate. Cancel and recreate to change
-                the vehicle.
+                {tr("Vehicle remains")} {editing.vehicle.brand}{" "}
+                {editing.vehicle.model} ({editing.vehicle.licensePlate}
+                {tr(
+                  "). The server recalculates the total at the current daily rate. Cancel and recreate to change the vehicle.",
+                )}{" "}
               </p>
             )}
             <>
@@ -435,14 +457,16 @@ export default function Reservations() {
                 onClick={check}
               >
                 <Search size={16} />
-                {busy ? "Checking…" : "Check available vehicles"}
+                {busy ? tr("Checking…") : tr("Check available vehicles")}
               </button>
               {offers && (
                 <>
                   <p className="r-note">
-                    {offers.items.length} available vehicles ·{" "}
-                    {offers.billedDays} calendar days · checked{" "}
-                    {new Date(offers.checkedAt).toLocaleTimeString()}
+                    {offers.items.length} {tr("available vehicles ·")}{" "}
+                    {offers.billedDays} {tr("calendar days · checked")}{" "}
+                    {new Date(offers.checkedAt).toLocaleTimeString(
+                      currentLocale(),
+                    )}
                   </p>
                   <div className="r-offers">
                     {offers.items.map((x) => (
@@ -460,18 +484,21 @@ export default function Reservations() {
                         <span>
                           {x.vehicle.brand} {x.vehicle.model}
                           <small>
-                            {x.vehicle.licensePlate} · {x.vehicle.transmission}{" "}
-                            · €{x.vehicle.dailyRate}/day
+                            {x.vehicle.licensePlate} ·{" "}
+                            {tr(x.vehicle.transmission)} ·{" "}
+                            {euros(x.vehicle.dailyRate)}
+                            {tr("/day")}{" "}
                           </small>
                         </span>
-                        <strong>€{x.total}</strong>
+                        <strong>{euros(x.total)}</strong>
                       </label>
                     ))}
                   </div>
                   {!offers.items.length && (
                     <p className="r-note">
-                      No matching vehicles. Try another period or review overdue
-                      returns.
+                      {tr(
+                        "No matching vehicles. Try another period or review overdue returns.",
+                      )}{" "}
                     </p>
                   )}
                 </>
@@ -480,11 +507,11 @@ export default function Reservations() {
                 <>
                   <div className="r-price">
                     <span>
-                      €{offer.vehicle.dailyRate} × {offers.billedDays} days
-                      <br />
-                      Agreed booking total
+                      {euros(offer.vehicle.dailyRate)} × {offers.billedDays}{" "}
+                      {tr("days")} <br />
+                      {tr("Agreed booking total")}{" "}
                     </span>
-                    <strong>€{offer.total}</strong>
+                    <strong>{euros(offer.total)}</strong>
                   </div>
                   <label style={{ display: "flex", alignItems: "center" }}>
                     <input
@@ -492,7 +519,9 @@ export default function Reservations() {
                       checked={confirmed}
                       onChange={(e) => setConfirmed(e.target.checked)}
                     />{" "}
-                    I reviewed the customer, dates, vehicle and price.
+                    {tr(
+                      "I reviewed the customer, dates, vehicle and price.",
+                    )}{" "}
                   </label>
                 </>
               )}
@@ -504,17 +533,17 @@ export default function Reservations() {
                 className="r-button secondary"
                 onClick={() => setOpen(false)}
               >
-                Close
+                {tr("Close")}{" "}
               </button>
               <button
                 className="r-button"
                 disabled={busy || !offer || !contactId || !confirmed}
               >
                 {busy
-                  ? "Saving…"
+                  ? tr("Saving…")
                   : editing
-                    ? "Review & save changes"
-                    : "Confirm reservation"}
+                    ? tr("Review & save changes")
+                    : tr("Confirm reservation")}
               </button>
             </div>
           </form>
@@ -524,10 +553,10 @@ export default function Reservations() {
         <Modal
           title={
             action.status === "CANCELLED"
-              ? "Cancel reservation?"
+              ? tr("Cancel reservation?")
               : action.status === "COMPLETED"
-                ? "Confirm vehicle returned?"
-                : "Start this rental?"
+                ? tr("Confirm vehicle returned?")
+                : tr("Start this rental?")
           }
           busy={busy}
           onClose={() => setAction(null)}
@@ -542,10 +571,16 @@ export default function Reservations() {
             </p>
             <p className="r-note">
               {action.status === "COMPLETED"
-                ? "Only confirm when the vehicle is physically returned. This releases availability."
+                ? tr(
+                    "Only confirm when the vehicle is physically returned. This releases availability.",
+                  )
                 : action.status === "CANCELLED"
-                  ? "Cancellation preserves the booking history and releases availability."
-                  : "Confirm pickup with the customer. The server checks the vehicle again."}
+                  ? tr(
+                      "Cancellation preserves the booking history and releases availability.",
+                    )
+                  : tr(
+                      "Confirm pickup with the customer. The server checks the vehicle again.",
+                    )}
             </p>
             <div className="r-form-footer">
               <button
@@ -553,7 +588,7 @@ export default function Reservations() {
                 disabled={busy}
                 onClick={() => setAction(null)}
               >
-                Go back
+                {tr("Go back")}{" "}
               </button>
               <button
                 className="r-button"
@@ -561,8 +596,8 @@ export default function Reservations() {
                 onClick={changeStatus}
               >
                 {busy
-                  ? "Saving…"
-                  : "Confirm " + labels[action.status].toLowerCase()}
+                  ? tr("Saving…")
+                  : tr("Confirm " + labels[action.status].toLowerCase())}
               </button>
             </div>
           </div>

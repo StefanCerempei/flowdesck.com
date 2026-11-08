@@ -1,4 +1,6 @@
+import { translate as tr, calendarDate, localizedError } from "../i18n";
 import { useEffect, useRef } from "react";
+import { euros } from "../lib/api";
 import { X, CarFront, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import "../pages/Rental.css";
@@ -14,16 +16,16 @@ export const labels = {
   AUTOMATIC: "Automatic",
 };
 export const Badge = ({ value }) => (
-  <span className={"r-badge r-" + value}>{labels[value] || value}</span>
+  <span className={"r-badge r-" + value}>{tr(labels[value] || value)}</span>
 );
 export const ErrorNotice = ({ message }) =>
   message ? (
     <div className="r-error" role="alert">
-      {message}
+      {localizedError(message)}
     </div>
   ) : null;
 export function PageHeader({
-  eyebrow = "RENTAL OPERATIONS",
+  eyebrow = tr("RENTAL OPERATIONS"),
   title,
   description,
   children,
@@ -39,7 +41,11 @@ export function PageHeader({
     </header>
   );
 }
-export function Empty({ title = "Nothing here yet", description, children }) {
+export function Empty({
+  title = tr("Nothing here yet"),
+  description,
+  children,
+}) {
   return (
     <div className="r-empty">
       <CarFront size={32} />
@@ -51,7 +57,7 @@ export function Empty({ title = "Nothing here yet", description, children }) {
 }
 export const Loading = () => (
   <div className="r-loading" role="status">
-    Loading your workspace…
+    {tr("Loading your workspace…")}{" "}
   </div>
 );
 export function Modal({ title, onClose, children, busy = false }) {
@@ -82,7 +88,7 @@ export function Modal({ title, onClose, children, busy = false }) {
         <button
           type="button"
           className="r-icon"
-          aria-label="Close dialog"
+          aria-label={tr("Close dialog")}
           disabled={busy}
           onClick={onClose}
         >
@@ -99,12 +105,12 @@ export function ReservationTable({ items, actions }) {
       <table className="r-table">
         <thead>
           <tr>
-            <th>Vehicle / customer</th>
-            <th>Rental period</th>
-            <th>Status</th>
-            <th>Agreed total</th>
+            <th>{tr("Vehicle / customer")}</th>
+            <th>{tr("Rental period")}</th>
+            <th>{tr("Status")}</th>
+            <th>{tr("Agreed total")}</th>
             <th>
-              <span className="r-sr">Actions</span>
+              <span className="r-sr">{tr("Actions")}</span>
             </th>
           </tr>
         </thead>
@@ -121,16 +127,18 @@ export function ReservationTable({ items, actions }) {
                 </small>
               </td>
               <td>
-                {r.startDate}
+                {calendarDate(r.startDate)}
                 <span className="r-date-arrow"> → </span>
-                {r.endDate}
-                <small>{r.billedDays} calendar days · end exclusive</small>
+                {calendarDate(r.endDate)}
+                <small>
+                  {r.billedDays} {tr("calendar days · end exclusive")}
+                </small>
               </td>
               <td>
                 <Badge value={r.status} />
               </td>
               <td>
-                <strong>€{r.agreedTotal}</strong>
+                <strong>{euros(r.agreedTotal)}</strong>
               </td>
               <td>
                 {actions ? (
@@ -140,7 +148,7 @@ export function ReservationTable({ items, actions }) {
                     className="r-text-link"
                     to={"/reservations?reservationId=" + r.id}
                     aria-label={
-                      "Open reservation for " + r.vehicle.licensePlate
+                      tr("Open reservation for ") + r.vehicle.licensePlate
                     }
                   >
                     <ArrowUpRight size={18} />

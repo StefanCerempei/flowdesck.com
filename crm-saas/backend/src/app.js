@@ -41,7 +41,7 @@ app.use('/api/invoices', invoiceRoutes);
 if (process.env.NODE_ENV === 'production') {
     const dist = fileURLToPath(new URL('../../frontend/dist/', import.meta.url));
     app.use(express.static(dist));
-    app.get(['/login', '/register', '/dashboard', '/contacts', '/invoices', '/settings', '/vehicles', '/reservations', '/copilot', '/insights'], (req, res) => {
+    app.get(['/login', '/register', '/dashboard', '/contacts', '/invoices', '/settings', '/vehicles', '/reservations', '/copilot', '/insights', '/business-plan'], (req, res) => {
         res.sendFile('index.html', { root: dist });
     });
 }

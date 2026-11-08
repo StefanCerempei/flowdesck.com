@@ -59,9 +59,10 @@ test.afterAll(async () => {
 });
 async function login(page) {
   await page.goto("/login");
+  await page.getByRole("button",{name:"English",exact:true}).click();
   await page.locator("input[type=email]").fill(email);
   await page.locator("input[type=password]").fill(password);
-  await page.getByRole("button", { name: "Intră în cont" }).click();
+  await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
 }
 async function createBooking(page) {
@@ -217,7 +218,7 @@ test("mobile navigation opens/closes and fleet has no page overflow", async ({
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await login(page);
-  const menu = page.getByRole("button", { name: "Meniu principal" });
+  const menu = page.getByRole("button", { name: "Main menu" });
   await expect(menu).toBeVisible();
   await menu.click();
   await page.getByRole("link", { name: "Fleet", exact: true }).click();
@@ -253,9 +254,10 @@ test("Copilot reviews a real offer and saves only after customer confirmation", 
   const origin = "http://127.0.0.1:"+server.address().port;
   try {
     await page.goto(origin+"/login");
+    await page.getByRole("button",{name:"English",exact:true}).click();
     await page.locator("input[type=email]").fill(email);
     await page.locator("input[type=password]").fill(password);
-    await page.getByRole("button",{name:"Intră în cont"}).click();
+    await page.getByRole("button",{name:"Sign in"}).click();
     await page.getByRole("link",{name:"Booking Copilot"}).click();
     const before = await prisma.reservation.count({where:{companyId}});
     await page.getByLabel("Reply language").selectOption("en-GB");
@@ -321,4 +323,100 @@ test("Fleet Intelligence shows real alerts, links and confirms an insurance remi
  await page.setViewportSize({width:390,height:844});
  await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.screenshot({path:"/tmp/flowdesck-insights-mobile.png",fullPage:true});
+});
+
+test("Romanian default, public roadmap navigation, bilingual refresh and authentication", async ({page}) => {
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("lang","ro");
+  await expect(page.getByRole("heading",{level:1})).toContainText("Flota ta.");
+  await page.getByRole("link",{name:"Plan de afaceri"}).click();
+  await page.getByRole("button",{name:"Anul 5"}).click();
+  await expect(page.getByText("Obiectiv · 3.000 de companii plătitoare",{exact:true})).toBeVisible();
+  await page.getByRole("button",{name:"English",exact:true}).click();
+  await expect(page.getByText("Target · 3,000 paying companies",{exact:true})).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("heading",{name:"Business plan",exact:true})).toBeVisible();
+  await page.goto("/register");
+  await expect(page.getByLabel("Company name")).toBeVisible();
+  await login(page);
+  await page.getByRole("button",{name:"Sign out"}).click();
+  await expect(page.getByRole("heading",{name:"Welcome back"})).toBeVisible();
+});
+
+test("customer create, edit, status filter, rental history and delete", async ({page}) => {
+  await login(page);
+  await page.goto("/contacts");
+  await page.getByRole("button",{name:"Add customer"}).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel("First name").fill("Test");
+  await dialog.getByLabel("Last name").fill("Renter");
+  await dialog.getByLabel("Phone").fill("0700000000");
+  await dialog.getByRole("button",{name:"Save customer"}).click();
+  let row = page.getByRole("row").filter({hasText:"Test Renter"});
+  await row.getByRole("button",{name:"Edit"}).click();
+  await dialog.getByLabel("Status").selectOption("ACTIVE");
+  await dialog.getByRole("button",{name:"Save customer"}).click();
+  await expect(dialog).toHaveCount(0);
+  await page.getByLabel("Status",{exact:true}).selectOption("ACTIVE");
+  await row.getByRole("link",{name:"Reservations"}).click();
+  await expect(page.getByText("No reservations to show")).toBeVisible();
+  await page.goto("/contacts");
+  await page.getByRole("searchbox").fill("0700000000");
+  await expect(row).toContainText("Active");
+  page.once("dialog", d=>d.accept());
+  await row.getByRole("button",{name:"Delete"}).click();
+  await expect(row).toHaveCount(0);
+});
+
+test("every route renders in both languages at phone, tablet and desktop widths", async ({page}) => {
+  test.setTimeout(120000);
+  await login(page);
+  const failures=[];
+  page.on("pageerror",e=>failures.push(e.message));
+  const routes=[
+    ["/","Flota ta.","Your fleet."],["/business-plan","Plan de afaceri","Business plan"],
+    ["/login","Bine ai revenit","Welcome back"],["/register","Creează spațiul de lucru","Create your workspace"],
+    ["/dashboard","Flota ta astăzi","A clear view of the road ahead."],["/contacts","Clienți","Customers"],
+    ["/vehicles","Flota de vehicule","Your fleet, in focus."],["/reservations","Rezervări","Every booking, in order."],
+    ["/invoices","Facturi","Invoices"],["/settings","Setările companiei","Workspace settings"],
+    ["/copilot","Asistent AI de rezervări","AI Booking Copilot"],["/insights","Analiza flotei","Fleet Intelligence"]];
+  for(const [language,column] of [["Română",1],["English",2]]){
+    await page.goto("/");
+    await page.getByRole("button",{name:language,exact:true}).click();
+    for(const width of [375,820,1440]){
+      await page.setViewportSize({width,height:900});
+      for(const route of routes){
+        await page.goto(route[0]);
+        await expect(page.getByRole("heading",{level:1})).toContainText(route[column]);
+        await expect(page.locator(".r-loading")).toHaveCount(0);
+        const layout = await page.evaluate(()=>({
+          width: document.documentElement.scrollWidth,
+          overflowing: [...document.querySelectorAll("main *")].filter(el => el.getBoundingClientRect().right > innerWidth && !el.closest(".r-table-wrap")).map(el=>el.className || el.tagName).slice(0,12)
+        }));
+        expect(layout.width,route[0]+" "+width+" "+JSON.stringify(layout)).toBeLessThanOrEqual(width);
+        if(width!==820 && column===1 && ["/","/contacts","/dashboard"].includes(route[0]))
+          await page.screenshot({path:"/tmp/flowdesck-review-"+width+"-"+(route[0].slice(1)||"landing")+".png"});
+      }
+    }
+  }
+  expect(failures).toEqual([]);
+});
+
+test("AI requests follow the selected language and keep manual results explicit", async ({page}) => {
+  await login(page);
+  await page.goto("/copilot");
+  await page.getByRole("button",{name:"Română",exact:true}).click();
+  await page.getByLabel("Mesaj",{exact:true}).fill("Aș dori să închiriez o mașină automată.");
+  const proposal = page.waitForRequest(r=>r.method()==="POST" && r.url().endsWith("/ai/booking-proposals"));
+  await page.getByRole("button",{name:"Analizează cererea"}).click();
+  expect((await proposal).postDataJSON().locale).toBe("ro-RO");
+  await expect(page.getByText("Căutare asistată manual",{exact:true})).toBeVisible();
+  await page.goto("/insights");
+  for(const [language,button,locale] of [["Română","Generează sinteza AI","ro-RO"],["English","Generate AI Briefing","en-GB"]]){
+    await page.getByRole("button",{name:language,exact:true}).click();
+    const briefing=page.waitForRequest(r=>r.method()==="POST" && r.url().endsWith("/ai/fleet-insights/explain"));
+    await page.getByRole("button",{name:button}).click();
+    expect((await briefing).postDataJSON().locale).toBe(locale);
+    await expect(page.getByText(locale==="ro-RO"?"Analiză bazată pe reguli · explicația AI este indisponibilă.":"Rule-based analysis — AI explanation unavailable.",{exact:true})).toBeVisible();
+  }
 });
