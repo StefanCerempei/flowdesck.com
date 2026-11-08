@@ -7,14 +7,25 @@ import {
   ShieldCheck,
   Gauge,
   MessageSquareText,
+  Receipt,
 } from "lucide-react";
 import PublicHeader from "../components/PublicHeader";
 import { useLanguage } from "../i18n";
 const features = [
   [
+    CalendarDays,
+    "Reservations and pricing",
+    "Review available vehicles and server-calculated prices. Your team confirms each booking.",
+  ],
+  [
+    Receipt,
+    "Customer invoices",
+    "Issue customer invoices and track recorded payment statuses alongside rental operations.",
+  ],
+  [
     CarFront,
-    "Fleet and reservations",
-    "Check availability, calculate rental prices and confirm bookings against the current fleet.",
+    "Fleet and availability",
+    "Keep vehicle details, daily rates and insurance dates together. Check availability for the requested rental period.",
   ],
   [
     MessageSquareText,
@@ -40,23 +51,29 @@ export default function Landing() {
       <main>
         <section className="hero">
           <div>
-            <p className="r-eyebrow">{t("RENTAL OPERATIONS")}</p>
-            <h1>
-              {t("Your fleet.")}
-              <br />
-              {t("Your next booking.")}
-            </h1>
+            <p className="r-eyebrow">{t("AI-POWERED RENTAL OPERATIONS")}</p>
+            <h1>{t("Run your rental business smarter.")}</h1>
             <p>
               {t(
-                "An AI rental operations assistant for independent car rental teams. Manage vehicles, answer booking inquiries and follow up on the work that needs attention.",
+                "Flowdesck brings your fleet, reservations, customers and operational insights into one AI-assisted workspace. Built for modern car rental teams.",
               )}
             </p>
-            <Link className="r-button" to="/register">
-              {t("Create your workspace")} <ArrowUpRight size={18} />
-            </Link>
+            <div className="hero-actions">
+              <Link className="r-button" to="/demo">
+                {t("Explore Live Demo")} <ArrowUpRight size={18} />
+              </Link>
+              <Link className="r-button secondary" to="/register">
+                {t("Create Workspace")}
+              </Link>
+            </div>
+            <p className="hero-demo-note">
+              {t(
+                "Explore fictional company data in an interactive, read-only demo. Guest AI workflows use manual and rule-based analysis.",
+              )}
+            </p>
           </div>
           <aside className="workflow">
-            <h2>{t("From inquiry to pickup")}</h2>
+            <h2>{t("From inquiry to fleet follow-up")}</h2>
             {[
               [
                 MessageSquareText,
@@ -73,6 +90,11 @@ export default function Landing() {
                 "Confirm the booking",
                 "Review the customer, vehicle and agreed total.",
               ],
+              [
+                Gauge,
+                "Fleet follow-up",
+                "Review overdue returns, utilization and insurance reminders.",
+              ],
             ].map(([Icon, title, body]) => (
               <div key={title}>
                 <Icon />
@@ -84,6 +106,15 @@ export default function Landing() {
             ))}
           </aside>
         </section>
+        <header className="features-heading">
+          <h2>{t("Flowdesck — Your AI-powered rental business assistant.")}</h2>
+          <p>{t("The B2B SaaS workspace for car rental teams.")}</p>
+          <p>
+            {t(
+              "Manage your fleet, streamline bookings and make smarter operational decisions — all from one workspace.",
+            )}
+          </p>
+        </header>
         <section className="feature-grid">
           {features.map(([Icon, title, body]) => (
             <article key={title}>

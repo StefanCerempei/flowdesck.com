@@ -11,7 +11,6 @@ export default function PublicHeader() {
         Flowdesck
       </Link>
       <nav>
-        <Link to="/business-plan">{t("Business plan")}</Link>
         <LanguageSwitch />
         <Link
           className="r-button secondary"

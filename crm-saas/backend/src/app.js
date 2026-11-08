@@ -47,6 +47,7 @@ if (process.env.NODE_ENV === 'production') {
     const dist = fileURLToPath(new URL('../../frontend/dist/', import.meta.url));
     app.use(express.static(dist));
     app.get(['/login', '/register', '/dashboard', '/contacts', '/invoices', '/settings', '/vehicles', '/reservations', '/copilot', '/insights', '/business-plan', '/demo'], (req, res) => {
+        if (req.path === '/business-plan') res.set('X-Robots-Tag', 'noindex, nofollow');
         res.sendFile('index.html', { root: dist });
     });
 }

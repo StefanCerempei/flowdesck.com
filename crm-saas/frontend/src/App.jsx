@@ -1,3 +1,4 @@
+import ProductMetadata from "./components/ProductMetadata";
 import Demo from "./pages/Demo";
 import Insights from "./pages/ai/Insights";
 import Vehicles from "./pages/vehicles/Vehicles";
@@ -15,6 +16,7 @@ import Invoices from "./pages/invoices/Invoices";
 function App() {
   return (
     <BrowserRouter>
+      <ProductMetadata />
       <Routes>
         {/* Ruta principală publică acum duce spre Landing Page */}
         <Route path="/demo" element={<Demo />} />

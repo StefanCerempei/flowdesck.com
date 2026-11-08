@@ -24,17 +24,26 @@ import {
 } from "lucide-react";
 import "./workspace.css";
 import { LanguageSwitch, useLanguage } from "./i18n";
-import { BookOpen } from "lucide-react";
 
-const links = [
-  ["/dashboard", "Dashboard", LayoutDashboard],
-  ["/vehicles", "Fleet", CarFront],
-  ["/reservations", "Reservations", CalendarDays],
-  ["/contacts", "Customers", Users],
-  ["/insights", "AI Fleet Insights", Sparkles],
-  ["/copilot", "Booking Copilot", Sparkles],
-  ["/business-plan", "Business plan", BookOpen],
-  ["/settings", "Settings", Settings],
+const groups = [
+  [
+    "Operations",
+    [
+      ["/dashboard", "Dashboard", LayoutDashboard],
+      ["/vehicles", "Fleet", CarFront],
+      ["/reservations", "Reservations", CalendarDays],
+      ["/contacts", "Customers", Users],
+      ["/invoices", "Invoices", Receipt],
+    ],
+  ],
+  [
+    "AI assistance",
+    [
+      ["/copilot", "Booking Copilot", Sparkles],
+      ["/insights", "Fleet Intelligence", Sparkles],
+    ],
+  ],
+  ["Workspace", [["/settings", "Settings", Settings]]],
 ];
 
 export default function Workspace() {
@@ -81,29 +90,30 @@ export default function Workspace() {
           className={"ws-links" + (open ? " ws-open" : "")}
         >
           <nav aria-label={t("Navigare principală")}>
-            {links.map(([path, label, Icon]) => (
-              <NavLink
-                key={path}
-                to={path}
-                title={t(label)}
-                aria-label={t(label)}
-                onClick={() => setOpenAt(null)}
+            {groups.map(([heading, links]) => (
+              <section
+                className="ws-nav-group"
+                key={heading}
+                aria-label={t(heading)}
               >
-                <Icon size={20} />
-                <span>{t(label)}</span>
-              </NavLink>
+                <h2>{t(heading)}</h2>
+                {links.map(([path, label, Icon]) => (
+                  <NavLink
+                    key={path}
+                    to={path}
+                    title={t(label)}
+                    aria-label={t(label)}
+                    onClick={() => setOpenAt(null)}
+                  >
+                    <Icon size={20} />
+                    <span>{t(label)}</span>
+                  </NavLink>
+                ))}
+              </section>
             ))}
           </nav>
           <div className="ws-tools">
             <LanguageSwitch />
-            <NavLink
-              to="/invoices"
-              title={t("Invoices")}
-              className="ws-invoices"
-            >
-              <Receipt size={19} />
-              <span>{t("Invoices")}</span>
-            </NavLink>
             <button
               className="ws-collapse"
               aria-label={compact ? t("Extinde meniul") : t("Restrânge meniul")}
@@ -119,7 +129,9 @@ export default function Workspace() {
           </div>
         </div>
       </aside>
-      <div className="demo-banner" hidden={!isDemoGuest()} role="status">{t("Demo Mode — Read Only")} · {t("Saving is restricted in demo mode.")}</div>
+      <div className="demo-banner" hidden={!isDemoGuest()} role="status">
+        {t("Demo Mode — Read Only")} · {t("Saving is restricted in demo mode.")}
+      </div>
       <Outlet />
     </div>
   );

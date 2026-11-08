@@ -16,3 +16,8 @@
 @media(max-width:600px){.ws-task-form {grid-template-columns:minmax(0,1fr) auto}.ws-task-form input {grid-column:1/-1}.ws .contacts-toolbar {flex-wrap:wrap}.ws .dashboard-grid {grid-template-columns:minmax(0,1fr)}.ws .panel {max-width:100%;min-width:0}.ws .task-title {overflow-wrap:anywhere}}
 
 .ws-tools .ws-invoices{display:flex;align-items:center;gap:12px;color:#cfdfdf;text-decoration:none;padding:12px;border-radius:9px;font:inherit}.ws-tools .ws-invoices.active{background:#d5f1e6;color:#193e38}
+
+.ws-nav-group{display:grid;gap:4px;margin-bottom:16px}
+.ws-nav-group h2{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#abc6b8;margin:6px 12px 8px;font-weight:650}
+.ws-links nav{gap:0}
+@media(min-width:1024px){.ws-compact .ws-nav-group h2{display:none}.ws-compact .ws-nav-group+.ws-nav-group{border-top:1px solid #3c505d;padding-top:12px}}

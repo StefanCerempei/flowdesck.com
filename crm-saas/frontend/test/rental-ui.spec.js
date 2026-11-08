@@ -304,7 +304,7 @@ test("Copilot reviews a real offer and saves only after customer confirmation", 
 test("Fleet Intelligence shows real alerts, links and confirms an insurance reminder",async({page})=>{
  await prisma.vehicle.update({where:{id:vehicleId},data:{insuranceExpiration:new Date(later(5)),createdAt:new Date(later(-60))}});
  await login(page);
- await page.getByRole("link",{name:"AI Fleet Insights"}).click();
+ await page.getByRole("link",{name:"Fleet Intelligence"}).click();
  await expect(page.getByRole("heading",{name:"Fleet Intelligence",exact:true})).toBeVisible();
  await expect(page.getByText("MEDIUM priority · Insurance date approaching")).toBeVisible();
  await page.getByRole("button",{name:"Generate AI Briefing"}).click();
@@ -328,8 +328,9 @@ test("Fleet Intelligence shows real alerts, links and confirms an insurance remi
 test("Romanian default, public roadmap navigation, bilingual refresh and authentication", async ({page}) => {
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("lang","ro");
-  await expect(page.getByRole("heading",{level:1})).toContainText("Flota ta.");
-  await page.getByRole("link",{name:"Plan de afaceri"}).click();
+  await expect(page.getByRole("heading",{level:1})).toContainText("Administrează inteligent");
+  await expect(page.locator('a[href="/business-plan"]')).toHaveCount(0);
+  await page.goto("/business-plan");
   await page.getByRole("button",{name:"Anul 5"}).click();
   await expect(page.getByText("Obiectiv · 3.000 de companii plătitoare",{exact:true})).toBeVisible();
   await page.getByRole("button",{name:"English",exact:true}).click();
@@ -374,7 +375,7 @@ test("every route renders in both languages at phone, tablet and desktop widths"
   const failures=[];
   page.on("pageerror",e=>failures.push(e.message));
   const routes=[
-    ["/","Flota ta.","Your fleet."],["/business-plan","Plan de afaceri","Business plan"],
+    ["/","Administrează inteligent","Run your rental business smarter."],["/business-plan","Plan de afaceri","Business plan"],
     ["/login","Bine ai revenit","Welcome back"],["/register","Creează spațiul de lucru","Create your workspace"],
     ["/dashboard","Flota ta astăzi","A clear view of the road ahead."],["/contacts","Clienți","Customers"],
     ["/vehicles","Flota de vehicule","Your fleet, in focus."],["/reservations","Rezervări","Every booking, in order."],
@@ -389,6 +390,9 @@ test("every route renders in both languages at phone, tablet and desktop widths"
         await page.goto(route[0]);
         await expect(page.getByRole("heading",{level:1})).toContainText(route[column]);
         await expect(page.locator(".r-loading")).toHaveCount(0);
+        await expect(page.locator('a[href="/business-plan"]')).toHaveCount(0);
+        if(route[0] !== "/business-plan") expect(await page.locator("body").innerText()).not.toMatch(/\bCRM\b/i);
+        if(route[0] === "/dashboard") await expect(page.locator('a[href="/invoices"]')).toHaveCount(1);
         const layout = await page.evaluate(()=>({
           width: document.documentElement.scrollWidth,
           overflowing: [...document.querySelectorAll("main *")].filter(el => el.getBoundingClientRect().right > innerWidth && !el.closest(".r-table-wrap")).map(el=>el.className || el.tagName).slice(0,12)

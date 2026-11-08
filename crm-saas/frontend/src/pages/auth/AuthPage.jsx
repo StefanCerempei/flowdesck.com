@@ -45,6 +45,7 @@ export default function AuthPage({ register = false }) {
         <form className="r-form" onSubmit={submit}>
           <p className="r-eyebrow">{t("RENTAL OPERATIONS")}</p>
           <h1>{t(register ? "Create your workspace" : "Welcome back")}</h1>
+          <p className="r-note">{t("The B2B SaaS workspace for car rental teams.")}</p>
           <ErrorNotice message={t(error)} />
           {register && (
             <label>

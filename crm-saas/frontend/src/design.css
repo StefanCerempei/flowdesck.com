@@ -349,3 +349,8 @@
 .demo-banner{margin-left:var(--rail);padding:12px 24px;background:#e6efc9;color:#304516;font-size:13px}
 .demo-banner[hidden]{display:none}.demo-task-fields{border:0;margin:0;padding:0;min-width:0}
 @media(max-width:1023px){.demo-banner{margin-left:0}}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.hero .hero-demo-note{font-size:12px;margin-top:16px;line-height:1.6;max-width:52ch}
+.features-heading{display:grid;gap:12px;margin-bottom:26px;max-width:760px}
+.public .hero h1{font-size:clamp(2.4rem,4.7vw,4.5rem)}
+@media(max-width:700px){.hero-actions .r-button{flex:1;white-space:nowrap}.ws-nav-group{margin-bottom:10px}}
